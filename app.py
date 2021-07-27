@@ -11,7 +11,7 @@ import traceback
 application = Flask(__name__)
 application.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 application.config.from_object(__name__)
-application.config['SECRET_KEY'] = '7d441f37d441f29567d441f2b6176b'
+# application.config['SECRET_KEY'] = ''
 
 
 logging.basicConfig(filename='log.log',
