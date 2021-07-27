@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import statistics
 import logging
+import os, datetime
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -50,7 +51,18 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
     
     # df = bingo_df.get_latest_bingo()
     
-    df = pd.read_csv('testing.csv')
+    # check if latest needs to be downloaded
+    
+    
+    mtime = datetime.datetime.fromtimestamp(os.stat('latest_data.csv').st_mtime)
+    
+    logging.info("latest_data last modified time %s" % mtime)
+    
+    if (datetime.datetime.now() - mtime).seconds > 300:
+        logging.info("Pulling latest data due to >5 minutes from last call")
+        bingo_df.get_latest_bingo()
+    
+    df = pd.read_csv('latest_data.csv')
     df.columns.name = ''
     
     df['rank'] = df['rank'].astype(int)

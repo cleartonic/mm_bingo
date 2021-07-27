@@ -43,6 +43,8 @@ def get_latest_bingo():
     df.columns = df.iloc[0]
     df.drop(df.index[0], inplace=True)
     
+    df.to_csv('latest_data.csv',index=None)
+    
     return df
 
 if __name__ == '__main__':

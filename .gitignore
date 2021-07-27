@@ -1,0 +1,10 @@
+credentials.json
+html/*
+__pycache__/
+token.json
+log.log
+data.csv
+testing.csv
+venv
+bingo.zip
+latest_data.csv

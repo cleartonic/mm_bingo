@@ -27,6 +27,7 @@
         <form action = "." method = post>
             {{ form.csrf }}
             
+        <div class = 'settings-container'>
         <div class='checkbox-container'>
         <ul class="checkbox-grid">
             <li><div>
@@ -82,18 +83,19 @@
         
         </div>
 
-        <div class = "submission_area">
-            <div class = "button_area"><input class='pure-button' type = "submit" value ="Submit"></input></div>
 
+        <div class = "submission_area">
             <div>{{ form.form_seed.label }}</div>
             <div class="numeric-input">{{ form.form_seed }}</div>
+            <div class = "button_area"><input class='pure-button' type = "submit" value ="Submit"></input></div>
             
+        </div>
+
         </div>
         </form>
         {% if goals is not none %}
         
             <div class="main-content">
-            <div class="title"><span>BINGO</span></div>
             <div class="title"><span>Seed Number: {{seed_number}}</span></div>
             <div class="title"><span>Settings: {{settings}}</span></div>
             <div class="bingo-card">
