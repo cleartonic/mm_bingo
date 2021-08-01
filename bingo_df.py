@@ -18,7 +18,7 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = '1Shsrl6EerL5-gR6zKX4nnOhS7mJHwyUGQsCOE7U8f6w'
-SAMPLE_RANGE_NAME = 'questions'
+SAMPLE_RANGE_NAME = 'bingo'
 
 def get_latest_bingo():
     """Shows basic usage of the Sheets API.
@@ -42,6 +42,9 @@ def get_latest_bingo():
     df = pd.DataFrame(values)
     df.columns = df.iloc[0]
     df.drop(df.index[0], inplace=True)
+    
+    df = df[df['rank']==df['rank']]
+    
     
     df.to_csv('latest_data.csv',index=None)
     

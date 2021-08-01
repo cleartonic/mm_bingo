@@ -9,7 +9,7 @@ import logging
 import traceback
 import os
 
-application = Flask(__name__)
+application = app = Flask(__name__)
 application.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 application.config.from_object(__name__)
 

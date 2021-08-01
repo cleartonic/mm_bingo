@@ -9,6 +9,13 @@ body {
     right:0px;
     top:0px;
     padding: 10px;
+
+}
+.other_info {
+    position:fixed;
+    right:0px;
+    top:30px;
+    padding: 10px;
     
 }
 .final_result_boxcontainer {
@@ -407,6 +414,18 @@ footer a .icons {
   font-size: 24px;
   
 }
+
+.title2 {
+  background: #000000;
+  color: #fff;
+  padding: 2px 5px;
+  margin: 2em auto 0;
+  grid-column: span 5;
+  text-align: center;
+  font-size: 16px;
+  
+}
+
 .title span {
   display: none;
 }
@@ -426,24 +445,51 @@ footer a .icons {
   background: #303030;
   padding: 10px;
   display: grid;
-  grid-gap: 3px;
-  grid-template-rows: repeat(5, 110px);
+  grid-gap: 2px;
+  grid-template-rows: repeat(5, 124px);
   grid-template-columns: repeat(5, 1fr);
   /* text-transform: uppercase; */
 }
-.bingo-card__item {
+.bingo-card__item1 {
   background: #606060;
+  /* border: 1px solid #0930de; */
   display: flex;
   align-items: center;
   text-align: center;
   justify-content: center;
   position: relative;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.35;
   user-select: none;
 }
-.bingo-card__item:after {
+.bingo-card__item2 {
+  background: #606060;
+  border: 1px solid #e0dd1f;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+}
+.bingo-card__item3 {
+  background: #606060;
+  border: 1px solid #de0909;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+}
+.bingo-card__item1:after {
   background: #32a86d;
   display: flex;
   align-items: center;
@@ -451,19 +497,89 @@ footer a .icons {
   justify-content: center;
   position: relative;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.35;
   user-select: none;
 }
-.bingo-card__item.active:after {
+.bingo-card__item1.active:after {
   height: 100%;
   color:white;
   opacity: 0.7;
 }
 
-.bingo-card__item {
-  padding: 15px;
+.bingo-card__item1 {
+  padding: 6px;
 }
+
+.bingo-card__item2:after {
+  background: #32a86d;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+}
+.bingo-card__item2.active:after {
+  height: 100%;
+  color:white;
+  opacity: 0.7;
+}
+
+.bingo-card__item2 {
+  padding: 6px;
+}
+
+.bingo-card__item3:after {
+  background: #32a86d;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+}
+.bingo-card__item3.active:after {
+  height: 100%;
+  color:white;
+  opacity: 0.7;
+}
+
+.bingo-card__item3 {
+  padding: 6px;
+}
+
+.bingo-card__text {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+}
+.bingo-card__footer {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 0px;
+  
+}
+
+.bingo-card__tooltipindicator {
+  border: 3px solid #0930de;
+  position: absolute;
+  top: 0px;
+  left: 0px
+}
+
+
+
+
 .bingo-card__item.active .bingo-card__checkbox:before {
   content: "✔";
   position: absolute;
@@ -538,3 +654,10 @@ footer a .icons {
   border: 2px solid black;
   font-size: 1.5em;
 }
+
+.tooltip {
+    background-color: rgba(0,0,0,0.3);
+    color: #fff;
+    border: 2px solid #f90;
+}
+

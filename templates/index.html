@@ -1,29 +1,31 @@
-<link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Nunito|Caveat+Brush" rel="stylesheet">
 
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"> -->
 
 
-{% block script %}
+<!-- {% block script %} -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/static/js.js"></script>
-{% endblock %}
+<!-- {% endblock %} -->
 
 <html>
     <head>
+
         <title>BINGO</title>
+        <link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Nunito|Caveat+Brush" rel="stylesheet">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='ico.ico') }}">
         <link rel="stylesheet" type="text/css" href="/static/style.css">
         <link href='https://fonts.googleapis.com/css?family=Ropa Sans' rel='stylesheet'>
         <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="/static/moment.min.js"></script>
-        <script src="/static/js3.js"></script>
+        
+
+        <script type="text/javascript" src="/static/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/js.js"></script>        
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         
         <div class="title_text"> Mega Man 1-6 BINGO</div>
-        <div class = "ct_info">Created by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a></div>
+        <div class = "ct_info">Generator by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a></div>
+        <div class = "other_info">Goals by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a>, <a href = "https://twitter.com/BaronHaynes" target = "_blank">@BaronHaynes</a> et. al.</div>
         <form action = "." method = post>
             {{ form.csrf }}
             
@@ -100,15 +102,28 @@
             <div class="title"><span>Settings: {{settings}}</span></div>
             <div class="bingo-card">
                 {% for goal in goals %}
-                <div class="bingo-card__item">{{goal}}<span class="bingo-card__checkbox"></span></div>            
+                    <div title = "{{goal[1]}}" class="bingo-card__item{{goal[2]}}">
+                    {% if goal[1] != '' %}
+                        <div class = "bingo-card__tooltipindicator"></div>
+                    {% endif %}
+                    <div class = "bingo-card__text">{{goal[0]}}</div>
+                    <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    
+                    
+                <span class="bingo-card__checkbox"></span>
+                
+                </div>            
+                
                 {% endfor %}
             
             </div>
             </div>
+        
+            <!-- <div class="title2"><span>Some users report issues with Firefox for clicking the card. Use Chrome if possible</span></div> -->
             <aside class="context">
                 <div class="clear-button">Clear board</div>
             </aside>
-
+        
         {% endif %}
     </body>
 </html>

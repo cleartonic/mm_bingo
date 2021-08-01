@@ -88,13 +88,24 @@ def index():
         else:
             goals = list(df['goal'].unique())
 
+            
+            goalsd = df[['goal','notes', 'rank', 'games']].T.to_dict()
+            goals = []
+            for k, v in goalsd.items():
+                notes = v['notes']
+                if notes != notes:
+                    notes = ''
+                    
+                goals.append([v['goal'],notes, v['rank'], v['games']])
+            
+
         form.form_seed.data = seed
 
         settings_string = get_settings_string(form)
 
-        return minify(render_template('index.html', goals = goals,settings = settings_string,  seed_number = seed, form=form))
+        return render_template('index.html', goals = goals,settings = settings_string,  seed_number = seed, form=form)
     else:
-        return minify(render_template('index.html', goals = None, settings = None, seed_number = None,form=MainForm()))
+        return (render_template('index.html', goals = None, settings = None, seed_number = None,form=MainForm()))
 if __name__ == '__main__':
-    # application.run()
-    application.run(debug=True)
+    application.run()
+    # application.run(debug=True)
