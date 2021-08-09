@@ -1,0 +1,38 @@
+
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"> -->
+
+
+<!-- {% block script %} -->
+
+<!-- {% endblock %} -->
+
+<html>
+    <head>
+
+        <title>BINGO</title>
+        <link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Nunito|Caveat+Brush" rel="stylesheet">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='ico.ico') }}">
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        <link href='https://fonts.googleapis.com/css?family=Ropa Sans' rel='stylesheet'>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        
+
+        <script type="text/javascript" src="/static/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/js.js"></script>        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        
+        <div class="title_text"> Mega Man 1-6 BINGO</div>
+        <div class = "ct_info">Generator by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a></div>
+        <div class = "other_info">Goals by <a href = "https://twitter.com/BaronHaynes" target = "_blank">@BaronHaynes</a>, <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a>  et al.</div>
+            <div class="main-content">
+            <div style="    font-size:36px;text-align:center">FAQ</div>
+            <ul>
+                {% for rule in rules %}
+                <li>{{rule}}</li>
+                {% endfor %}
+            </ul>
+            </div>
+    </body>
+</html>

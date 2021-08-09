@@ -10,16 +10,18 @@ import os, datetime
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
+pd.set_option('mode.chained_assignment', None)
 
 STDEV_LIMIT = 1.5
 SCORE_AVERAGE = 2 # this must be 2 for ranks 1 - 3, if this changes in the future in the questions, then this must also change
 SCORE_MAX = 3
 DF_ITER_LIMIT = 100
 ITER_LIMIT = 500
+USE_FIXED_LOCATIONS = True
 
 
 logging.root.handlers = []
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO , filename='log.log')
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO) # , filename='log.log')
 
 # set up logging to console
 console = logging.StreamHandler()
@@ -33,12 +35,14 @@ logging.getLogger("").addHandler(console)
 def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
     
     if settings == None:
-        settings = {'mm1' : False,
+        settings = {'mm1' : True,
             'mm2' : True,
-            'mm3' : False,
+            'mm3' : True,
             'mm4' : True,
-            'mm5' : False,
-            'mm6' : True}
+            'mm5' : True,
+            'mm6' : True,
+            'hard_mode' : True,
+            'easy_mode' : False}
     
     if SEED_NUM == None:
         SEED_NUM = random.randint(1,999999999)
@@ -68,7 +72,13 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
     df.columns.name = ''
     # df = df.fillna('')
     
-    df['rank'] = df['rank'].astype(int)
+    def apply_int(x):
+        try:
+            return int(x)
+        except:
+            return 1
+    
+    df['rank'] = df['rank'].apply(apply_int)
     df['games'] = df['games'].astype(str)
     
     
@@ -114,32 +124,6 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         return True
         
         
-        
-        # if not x or x != x:
-        #     return True
-        # elif y == '' or y != y:
-        #     return True
-        # elif y == 'all':
-            
-        #     # this is temporarily obtuse so that when mm7-11 are added, it must be different
-        #     settings2 = {'mm1' : settings['mm1'],
-        #                     'mm2' : settings['mm2'],
-        #                     'mm3' : settings['mm3'],
-        #                     'mm4' : settings['mm4'],
-        #                     'mm5' : settings['mm5'],
-        #                     'mm6' : settings['mm6']}
-        #     if all(settings2.values()):
-        #         return True
-        #     else:
-        #         return False
-        
-        # else:
-        #     categories = x.split(",")
-        #     for c in categories:
-        #         if c not in valid_games:
-        #             return False
-        #     # passes test
-        #     return True
     df['validator'] = np.vectorize(apply_valid_games)(df['games'],df['type'])
     df = df[df['validator']==True]
     df.drop('validator',axis=1,inplace=True)
@@ -172,16 +156,49 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         squares_1 = squares - squares_3 - squares_2
         
         
-        df3 = df[df['rank']==3]
-        df2 = df[df['rank']==2]
-        df1 = df[df['rank']==1]
+        if settings['hard_mode']:
+            df3 = df[df['rank']>3]
+            df3t = df3.sample(squares_3, random_state=SEED_NUM)
+            
+            
+            df2 = df[(df['rank']==3) & (~df.index.isin(df3t.index))]
+            df1 = df[df['rank']==2]
+            
+            
+            
+            df2t = df2.sample(squares_2, random_state=SEED_NUM)
+            df1t = df1.sample(squares_1, random_state=SEED_NUM)
+            
+            
+        elif settings['easy_mode']:
+            df3 = df[df['rank']==2]
+            df3t = df3.sample(squares_3, random_state=SEED_NUM)
+
+            df2 = df[df['rank']==1]
+            df2t = df2.sample(squares_2, random_state=SEED_NUM)
+            
+            df1 = df[(df['rank']==1) & (~df.index.isin(df2t.index))]
+            
+
+            df1t = df1.sample(squares_1, random_state=SEED_NUM)
+            
+            
+            
+        else:
+            df3 = df[df['rank']==3]
+            df2 = df[df['rank']==2]
+            df1 = df[df['rank']==1]
+
+            df3t = df3.sample(squares_3, random_state=SEED_NUM)
+            df2t = df2.sample(squares_2, random_state=SEED_NUM)
+            df1t = df1.sample(squares_1, random_state=SEED_NUM)
+
+
         
-        df3t = df3.sample(squares_3, random_state=SEED_NUM)
-        df2t = df2.sample(squares_2, random_state=SEED_NUM)
-        df1t = df1.sample(squares_1, random_state=SEED_NUM)
         
         dft = df3t.append(df2t).append(df1t)        
-        existing_groups = list(dft['group'])
+        existing_groups = list(set(dft['group']))
+        existing_groups = [i for i in existing_groups if type(i) == str]
         
         # now check if group type is unique and try to find replacements if not
         try: 
@@ -193,36 +210,48 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
             df_count = dft[['group']]
             df_count['count'] = 1
             
+
             
             df_piv = df_count.pivot_table(index=['group'],values='count',aggfunc=np.sum)
+            
+            
         
             if not df_piv.empty:            
-            
-                groups_to_replace = df_piv[df_piv['count']>1].to_dict()['count']
-    
-    
-                for group_type, count in groups_to_replace.items():
-                    
-                    # filter on matching group types
-                    dft2 = dft[dft['group']==group_type]
-                    
-                    # sample 1, and then replace the remaining 
-                    indexes = list(dft2.index)
-                    index_to_keep = random.choice(indexes)
-                    other_indexes = [i for i in indexes if i not in [index_to_keep]]
-                    
-                    for idx in other_indexes:
-                        x = df_dict[idx]
-                        rank = x['rank']
-                        matching_ranks = [i for i in df_dict if df_dict[i]['rank']==rank and df_dict[i]['group'] not in existing_groups and i not in dft.index]
+                
+                
+                try:
+                
+                    groups_to_replace = df_piv[df_piv['count']>1].to_dict()['count']
+        
+        
+                    for group_type, count in groups_to_replace.items():
                         
-                        if not matching_ranks:
-                            logging.info("Matching ranks & group types could not be found, ignoring")
-                        else:
-                            chosen_idx = random.choice(matching_ranks)
-                            existing_groups.append(df_dict[chosen_idx]['group'])
-                            indexes_to_add.append(chosen_idx)
-                            indexes_to_drop.append(idx)
+                        # filter on matching group types
+                        dft2 = dft[dft['group']==group_type]
+                        
+                        # sample 1, and then replace the remaining 
+                        indexes = list(dft2.index)
+                        index_to_keep = random.choice(indexes)
+                        other_indexes = [i for i in indexes if i not in [index_to_keep]]
+                        
+                        for idx in other_indexes:
+                            x = df_dict[idx]
+                            rank = x['rank']
+                            matching_ranks = [i for i in df_dict if df_dict[i]['rank']==rank and df_dict[i]['group'] not in existing_groups and i not in dft.index and i not in indexes_to_add and i not in indexes_to_drop]
+                            
+                            if not matching_ranks:
+                                logging.info("Matching ranks & group types could not be found, ignoring")
+                            else:
+                                chosen_idx = random.choice(matching_ranks)
+                                if type(df_dict[chosen_idx]['group']) == str:    
+                                    existing_groups.append(df_dict[chosen_idx]['group'])
+                                indexes_to_add.append(chosen_idx)
+                                indexes_to_drop.append(idx)
+                except:
+                    logging.info("Error on group allocation, retrying df")
+                    continue
+                            
+                            
         except Exception as e:
             logging.info("Error on replacing group_types: %s" % e)
             
@@ -230,6 +259,7 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         logging.info("Adding indexes %s" % indexes_to_add)
         logging.info("Dropping indexes %s" % indexes_to_drop)
         
+
         
         dft = dft.drop(indexes_to_drop).append(df.loc[indexes_to_add])
         
@@ -241,169 +271,277 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
             logging.info("Not enough rows to create bingo, retrying")
             continue 
         
+        if len(dft.index.unique()) < 25:
+            logging.info("Not enough unique squares to create bingo, retrying")
+            continue 
+        
         else:
-            
-            
-            #### iteration
             iter_num = 0
-            pass_flag = False
-            while iter_num < ITER_LIMIT and not pass_flag:
-                # logging.info("Df iter %s, iter attempt: %s" % (df_iter_num, iter_num))
-                dft['random'] = df['goal'].apply(lambda x : random.randint(1,100000))
-                dft = dft.sort_values(by='random')
-                dft.reset_index(inplace=True,drop=True)
+            if USE_FIXED_LOCATIONS:
+                # fixed locations means use a preset bingo board for tier 2 and 3 slots
+                # 
+                
+            
+
+                # later, you could build out different sets of these 
                 
                 
-                data = dft.to_dict()
-                ranks = list(data['rank'].values())[::-1]
-                
-                array = []
-                for r in range(5):
-                    templ = []
-                    for r2 in range(5):
-                        templ.append(ranks.pop())
-                    array.append(templ)
-                
-                
-                row_scores = []
-                for i in array:
-                    row_scores.append(sum(i))
+                # square sets is a list that has 2 lists, first has rank 3, second has rank 2
+                square_sets = [
+                    [[1,5,12,19,23],[4,6,13,15,22]],  # a
+                    [[3,9,12,15,21],[1,8,10,17,24]],  # a90
+                    [[1,5,12,19,23],[2,9,11,18,20]],  # a180
+                    [[3,9,12,15,21],[0,7,14,16,23]],  # a270
                     
-                col_scores = []
-                for i in range(5):
-                    templ = []
-                    for i2 in array:
-                        templ.append(i2[i])
-                    col_scores.append(sum(templ))
-                
+                    [[3,5,12,19,21],[1,8,10,17,24]],  # b1
+                    [[3,5,12,19,21],[2,9,11,18,20]],  # b2 90deg
+                    [[3,5,12,19,21],[0,7,14,16,23]],  # b2 180deg
+                    [[3,5,12,19,21],[4,6,13,15,22]],  # b2 270deg
                     
+                    [[0,8,14,17,21],[2,9,11,18,20]],  # c1
+                    [[4,5,11,18,22],[0,7,14,16,23]],  # c2 90
+                    [[3,7,10,16,24],[4,6,13,15,22]],  # c3 180 
+                    [[2,6,13,19,20],[1,8,10,17,24]],  # c4 270
+                    
+                                  
+                              ] 
                 
-                # this is "dynamic" scaling that says if on the current set of questions
-                # it's starting to fail (e.g., too many filters applied)
-                # at least give it a shot to finish with some easier leniency near the end 
-                if iter_num > ITER_LIMIT * .95:
-                    UPPER_AVG_LIMIT = 7.5
-                    LOWER_AVG_LIMIT = 2.5
-                elif iter_num > ITER_LIMIT * .90:
-                    UPPER_AVG_LIMIT = 7
-                    LOWER_AVG_LIMIT = 3
+                chosen_set = random.choice(square_sets)
+                # chosen_set = [square_sets[11]][0] # testing each one
+                
+                #
+                tier_3_squares = chosen_set[0]
+                tier_2_squares = chosen_set[1]
+                
+                tier_1_squares = [i for i in range(0,25)]
+                tier_1_squares = [i for i in tier_1_squares if i not in tier_3_squares and i not in tier_2_squares]
+
+
+                # build dataframes
+            
+            
+                if settings['hard_mode']:
+                    
+                    try:
+                        dft3 = dft[dft['rank']>3]
+                        if dft3.shape[0] < 5:
+                            dft3 = dft3.append(dft[dft['rank']==3].sample(5 - dft3.shape[0], random_state=SEED_NUM))
+    
+                        
+                        dft3['squares'] = tier_3_squares
+                        dft2 = dft[(dft['rank']==3) & (~dft.index.isin(dft3.index))]
+                        dft2['squares'] = tier_2_squares
+                        dft1 = dft[dft['rank']==2]
+                        dft1['squares'] = tier_1_squares
+                    except Exception as e:
+                        logging.info("Error on building hardtype squares, retrying df generation: %s" % e)
+                        continue
+                    
+                elif settings['easy_mode']:
+                    dft3 = dft[dft['rank']==2]
+                    dft3['squares'] = tier_3_squares
+                    dft2 = dft[dft['rank']==1].iloc[0:5]
+                    dft2['squares'] = tier_2_squares
+                    dft1 = dft[(dft['rank']==1) & (~dft.index.isin(dft2.index))]
+                    dft1['squares'] = tier_1_squares
+                    
+                    
                 else:
-                    UPPER_AVG_LIMIT = 6.5
-                    LOWER_AVG_LIMIT = 3.5
+   
+                    dft3 = dft[dft['rank']==3]
+                    dft3['squares'] = tier_3_squares
+                    dft2 = dft[dft['rank']==2]
+                    dft2['squares'] = tier_2_squares
+                    dft1 = dft[dft['rank']==1]
+                    dft1['squares'] = tier_1_squares
                     
+                    
+                        
+
+
                 
-                ## AVERAGE ## 
+                dft = dft3.append(dft2).append(dft1)
+                dft = dft.sort_values(by='squares')
                 
-                row_avg_pass = True
-                for i in row_scores:
-                    # if SCORE_AVERAGE * UPPER_AVG_LIMIT < i < SCORE_AVERAGE * LOWER_AVG_LIMIT: ## e.g. an average of 2, means row should be ~10, and force it not accept < 8
-                    if i != 8:
-                        row_avg_pass = False
-                col_avg_pass = True
-                for i in col_scores:
-                    # if SCORE_AVERAGE * UPPER_AVG_LIMIT < i < SCORE_AVERAGE * LOWER_AVG_LIMIT: ## e.g. an average of 2, means row should be ~10, and force it not accept < 8
-                    if i != 8:
-                        col_avg_pass = False
+                if dft.shape[0] < 25:
+                    logging.info("Not enough squares for bingo, retrying df generation")
+                    
+                    continue
+                
+                
+                
+                pass_flag = True
+                df_pass_flag = True
+            
+            else:
+                
+                # if not using fixed rank 2/3, then this will try to automatically parse 
+                
+                #### iteration
+                
+                pass_flag = False
+                while iter_num < ITER_LIMIT and not pass_flag:
+                    # logging.info("Df iter %s, iter attempt: %s" % (df_iter_num, iter_num))
+                    dft['random'] = df['goal'].apply(lambda x : random.randint(1,100000))
+                    dft = dft.sort_values(by='random')
+                    dft.reset_index(inplace=True,drop=True)
+                    
+                    
+                    data = dft.to_dict()
+                    ranks = list(data['rank'].values())[::-1]
+                    
+                    array = []
+                    for r in range(5):
+                        templ = []
+                        for r2 in range(5):
+                            templ.append(ranks.pop())
+                        array.append(templ)
+                    
+                    
+                    row_scores = []
+                    for i in array:
+                        row_scores.append(sum(i))
+                        
+                    col_scores = []
+                    for i in range(5):
+                        templ = []
+                        for i2 in array:
+                            templ.append(i2[i])
+                        col_scores.append(sum(templ))
+                    
+                        
+                    
+                    # this is "dynamic" scaling that says if on the current set of questions
+                    # it's starting to fail (e.g., too many filters applied)
+                    # at least give it a shot to finish with some easier leniency near the end 
+                    if iter_num > ITER_LIMIT * .95:
+                        UPPER_AVG_LIMIT = 7.5
+                        LOWER_AVG_LIMIT = 2.5
+                    elif iter_num > ITER_LIMIT * .90:
+                        UPPER_AVG_LIMIT = 7
+                        LOWER_AVG_LIMIT = 3
+                    else:
+                        UPPER_AVG_LIMIT = 6.5
+                        LOWER_AVG_LIMIT = 3.5
+                        
+                    
+                    ## AVERAGE ## 
+                    
+                    row_avg_pass = True
+                    for i in row_scores:
+                        # if SCORE_AVERAGE * UPPER_AVG_LIMIT < i < SCORE_AVERAGE * LOWER_AVG_LIMIT: ## e.g. an average of 2, means row should be ~10, and force it not accept < 8
+                        if i != 8:
+                            row_avg_pass = False
+                    col_avg_pass = True
+                    for i in col_scores:
+                        # if SCORE_AVERAGE * UPPER_AVG_LIMIT < i < SCORE_AVERAGE * LOWER_AVG_LIMIT: ## e.g. an average of 2, means row should be ~10, and force it not accept < 8
+                        if i != 8:
+                            col_avg_pass = False
+                            
+                            
+                            
+                    ## AVERAGE, DIAGONALS ##
+                    tl_col_score = 0
+                    for i in range(5):
+                        tl_col_score += array[i][i]
+                        
+                    tr_col_score = 0
+                    for i in range(5):
+                        tr_col_score += array[i][4-i]
+                        
+                    # tl_pass = SCORE_AVERAGE * UPPER_AVG_LIMIT > tl_col_score > SCORE_AVERAGE * LOWER_AVG_LIMIT
+                    # tr_pass = SCORE_AVERAGE * UPPER_AVG_LIMIT > tr_col_score > SCORE_AVERAGE * LOWER_AVG_LIMIT
+                    
+                    tl_pass = tl_col_score == 8
+                    tr_pass = tr_col_score == 8
+                    
+                    # logging.info(tl_col_score, tr_col_score, tl_pass, tr_pass)
+                    
+                    ## STDEV ##
+                    
+                    row_stdev = round(statistics.stdev(row_scores),2)
+                    col_stdev = round(statistics.stdev(col_scores),2)
+                    
+                    row_stdev_pass = row_stdev <= STDEV_LIMIT
+                    col_stdev_pass = col_stdev <= STDEV_LIMIT
+                    
+                    
+                    
+                    #######################################
+                    # this is temporarily disabled
+                    # right now we have static 5 for rank 2 and 3
+                    #######################################
+                    
+                    
+                    # MAX OF HIGHEST RANK
+                    # rows
+                    
+                    COUNT_LIMIT = 1
+                    if squares_3 > 5:
+                        COUNT_LIMIT = 2
+                    
+                    rows_max_rank = True
+                    for i in array:
+                        if i.count(SCORE_MAX) > COUNT_LIMIT:
+                            rows_max_rank = False
+                            break
+            
+                    # cols
+                    cols_max_rank = True
+                    for i in range(5):
+                        temp_l = []
+                        for i2 in array:
+                            temp_l.append(i2[i])
+                        if temp_l.count(SCORE_MAX) > COUNT_LIMIT:
+                            cols_max_rank = False
+                            break
                         
                         
                         
-                ## AVERAGE, DIAGONALS ##
-                tl_col_score = 0
-                for i in range(5):
-                    tl_col_score += array[i][i]
+            
+                    # MAX OF SECOND RANK
+                    # rows
                     
-                tr_col_score = 0
-                for i in range(5):
-                    tr_col_score += array[i][4-i]
+                    COUNT_LIMIT = 1
+                    if squares_2 > 5:
+                        COUNT_LIMIT = 2
                     
-                # tl_pass = SCORE_AVERAGE * UPPER_AVG_LIMIT > tl_col_score > SCORE_AVERAGE * LOWER_AVG_LIMIT
-                # tr_pass = SCORE_AVERAGE * UPPER_AVG_LIMIT > tr_col_score > SCORE_AVERAGE * LOWER_AVG_LIMIT
-                
-                tl_pass = tl_col_score == 8
-                tr_pass = tr_col_score == 8
-                
-                # logging.info(tl_col_score, tr_col_score, tl_pass, tr_pass)
-                
-                ## STDEV ##
-                
-                row_stdev = round(statistics.stdev(row_scores),2)
-                col_stdev = round(statistics.stdev(col_scores),2)
-                
-                row_stdev_pass = row_stdev <= STDEV_LIMIT
-                col_stdev_pass = col_stdev <= STDEV_LIMIT
-                
-                
-                
-                #######################################
-                # this is temporarily disabled
-                # right now we have static 5 for rank 2 and 3
-                #######################################
-                
-                
-                # MAX OF HIGHEST RANK
-                # rows
-                
-                COUNT_LIMIT = 1
-                if squares_3 > 5:
-                    COUNT_LIMIT = 2
-                
-                rows_max_rank = True
-                for i in array:
-                    if i.count(SCORE_MAX) > COUNT_LIMIT:
-                        rows_max_rank = False
-                        break
-        
-                # cols
-                cols_max_rank = True
-                for i in range(5):
-                    temp_l = []
-                    for i2 in array:
-                        temp_l.append(i2[i])
-                    if temp_l.count(SCORE_MAX) > COUNT_LIMIT:
-                        cols_max_rank = False
-                        break
+                    SECOND_RANK = 2
+                    rows_second_rank = True
+                    for i in array:
+                        if i.count(SECOND_RANK) > COUNT_LIMIT:
+                            rows_second_rank = False
+                            break
+            
+                    # cols
+                    cols_second_rank = True
+                    for i in range(5):
+                        temp_l = []
+                        for i2 in array:
+                            temp_l.append(i2[i])
+                        if temp_l.count(SECOND_RANK) > COUNT_LIMIT:
+                            cols_second_rank = False
+                            break
+            
                     
                     
                     
-        
-                # MAX OF SECOND RANK
-                # rows
-                
-                COUNT_LIMIT = 1
-                if squares_2 > 5:
-                    COUNT_LIMIT = 2
-                
-                SECOND_RANK = 2
-                rows_second_rank = True
-                for i in array:
-                    if i.count(SECOND_RANK) > COUNT_LIMIT:
-                        rows_second_rank = False
-                        break
-        
-                # cols
-                cols_second_rank = True
-                for i in range(5):
-                    temp_l = []
-                    for i2 in array:
-                        temp_l.append(i2[i])
-                    if temp_l.count(SECOND_RANK) > COUNT_LIMIT:
-                        cols_second_rank = False
-                        break
-        
-                
-                
-                
-                logging.info("%s %s %s %s %s %s %s %s %s %s " % (row_stdev_pass , col_stdev_pass , row_avg_pass , col_avg_pass , tl_pass , tr_pass , rows_max_rank , cols_max_rank , rows_second_rank, cols_second_rank))
-                for i in array:
-                    logging.info(i)
-                if row_stdev_pass and col_stdev_pass and row_avg_pass and col_avg_pass and tl_pass and tr_pass and rows_max_rank and cols_max_rank and rows_second_rank and cols_second_rank:
-                # if row_avg_pass and col_avg_pass:
-                    pass_flag = True
-                    df_pass_flag = True
+                    logging.info("%s %s %s %s %s %s %s %s %s %s " % (row_stdev_pass , col_stdev_pass , row_avg_pass , col_avg_pass , tl_pass , tr_pass , rows_max_rank , cols_max_rank , rows_second_rank, cols_second_rank))
+                    for i in array:
+                        logging.info(i)
+                    if row_stdev_pass and col_stdev_pass and row_avg_pass and col_avg_pass and tl_pass and tr_pass and rows_max_rank and cols_max_rank and rows_second_rank and cols_second_rank:
+                    # if row_avg_pass and col_avg_pass:
+                        pass_flag = True
+                        df_pass_flag = True
+                        
                     
-                
-                
-                iter_num += 1
+                    
+                    iter_num += 1
+                    
+                    
+                    
+                    
+                    
             df_iter_num += 1
                 
             
@@ -411,21 +549,59 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         error_message = "No bingo set could be generated due to iteration limit."
         dft = pd.DataFrame()
     else:
-        for i in array:
-            logging.info(i)
-        logging.info("%s %s" % (row_scores, col_scores))
-        dft.drop('random',axis=1,inplace=True)
-        logging.info(dft)
+        if not USE_FIXED_LOCATIONS:
+            for i in array:
+                logging.info(i)
+            logging.info("%s %s" % (row_scores, col_scores))
+            dft.drop('random',axis=1,inplace=True)
+        logging.info(dft[['goal','rank','games','type','group','notes']])
         
         
         # logging.info(row_stdev, col_stdev)
         # logging.info(row_stdev_pass, col_stdev_pass)
 
+
+    def apply_bool(x):
+        if x == 'y' or x == 'Y':
+            return True
+        else:
+            return False
+
+    dft['pw'] = dft['pw'].apply(apply_bool)
+
     return dft, error_message, SEED_NUM
+
+
+def generate_popout(settings):
+    data = settings['data']
+    data, settings_str = data.split(",Seed ")
+    data = data.split(",")
+    data_header = data[0]
+    squares = [int(i) for i in data[1:]]
+    
+    df = pd.read_csv('latest_data.csv').loc[squares]
+    
+    goalsd = df[['goal','notes', 'rank', 'games','pw']].T.to_dict()
+    goals = []
+    for k, v in goalsd.items():
+        notes = v['notes']
+        if notes != notes:
+            notes = ''
+        if v['pw']:
+            notes = '%s\n(password allowed)' % notes
+            
+        goals.append([v['goal'],notes, v['rank'], v['games'], v['pw'], k])
+
+    
+    return data_header, goals, "Seed %s" % settings_str 
+
+
+
+
 
 if __name__ == '__main__':
     if True:
-        SEED_NUM = 537019425
+        SEED_NUM = None
         df, error_message, seed_num = generate_card(SEED_NUM)
         if df.empty:
             logging.info("No dataframe was returned")

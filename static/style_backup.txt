@@ -1,0 +1,89 @@
+
+
+.item1:after {
+  background: #32a86d;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+}
+item1.active:after {
+  height: 100%;
+  color:white;
+  opacity: 0.7;
+}
+
+.bingo-card-item .item1 {
+  padding: 6px;
+}
+
+.bingo-card-item .item2:after {
+  background: #32a86d;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+}
+.bingo-card-item .item2.active:after {
+  height: 100%;
+  color:white;
+  opacity: 0.7;
+}
+
+.bingo-card-item .item2 {
+  padding: 6px;
+}
+
+.bingo-card__item3:after {
+  background: #32a86d;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+}
+.bingo-card__item3.active:after {
+  height: 100%;
+  color:white;
+  opacity: 0.7;
+}
+
+.bingo-card__item3 {
+  padding: 6px;
+}
+
+.bingo-card__item4:after {
+  background: #32a86d;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+}
+.bingo-card__item4.active:after {
+  height: 100%;
+  color:white;
+  opacity: 0.7;
+}
+
+.bingo-card__item4 {
+  padding: 6px;
+}

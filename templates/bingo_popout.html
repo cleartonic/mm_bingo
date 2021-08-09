@@ -1,0 +1,85 @@
+
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"> -->
+
+
+<!-- {% block script %} -->
+
+<!-- {% endblock %} -->
+
+<html>
+    <head>
+
+        <title>BINGO</title>
+        <link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Nunito|Caveat+Brush" rel="stylesheet">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='ico.ico') }}">
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        <link href='https://fonts.googleapis.com/css?family=Ropa Sans' rel='stylesheet'>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        
+
+        <script type="text/javascript" src="/static/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/js.js"></script>        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        
+        
+        {% if data_header != "BOARD" %}
+        
+            {% if goals is not none %}
+
+
+                <div class="bingo-card-popout">
+                    <div class="bingo-card__borders-popout">{{data_header}}</div>
+
+                    
+                
+                    {% for goal in goals[0:5] %}
+                        <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}-popout">
+                        {% if goal[1] != '' %}
+                            <div class = "bingo-card__tooltipindicator"></div>
+                        {% endif %}
+                        {% if goal[4] == True %}
+                            <div class = "bingo-card__pwindicator"></div>
+                        {% endif %}
+                        <div class = "bingo-card__text">{{goal[0]}}</div>
+                        <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                        </div>            
+                    {% endfor %}
+                
+                </div>
+
+
+                
+             
+            
+            {% endif %}
+            
+        {% else %}
+
+                <div class="bingo-card-popoutboard">
+                {% for goal in goals %}
+                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}-popout-board">
+                    {% if goal[1] != '' %}
+                        <div class = "bingo-card__tooltipindicator"></div>
+                    {% endif %}
+                    {% if goal[4] == True %}
+                        <div class = "bingo-card__pwindicator"></div>
+                    {% endif %}
+                    <div class = "bingo-card__text">{{goal[0]}}</div>
+                    <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    </div>            
+                {% endfor %}
+                </div>
+
+                <div class="title"><span>{{settings_str}}</span></div>
+        {% endif %}
+
+
+        <div class="font-buttons">
+        <div class = 'font-button'> <button id="decrease-font-size">- font</button> </div>
+        <div class = 'font-button'><button id="increase-font-size">+ font</button></div>
+        <div class = 'font-button'><button id="toggle-games">Toggle games</button></div>
+        </div>
+    </body>
+</html>

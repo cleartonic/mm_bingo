@@ -23,9 +23,10 @@
     </head>
     <body>
         
-        <div class="title_text"> Mega Man 1-6 BINGO</div>
+        <div class="title_text"> <img src = "{{ url_for('static', filename='site-logo.png') }}"></img></div>
         <div class = "ct_info">Generator by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a></div>
-        <div class = "other_info">Goals by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a>, <a href = "https://twitter.com/BaronHaynes" target = "_blank">@BaronHaynes</a> et. al.</div>
+        <div class = "other_info">Goals by <a href = "https://twitter.com/BaronHaynes" target = "_blank">@BaronHaynes</a>, <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a>  et al.</div>
+        <div style = "font-size:24px;" class = "faq_info"><a href = "/faq" target = "_blank">FAQ for bingo</a></div>
         <form action = "." method = post>
             {{ form.csrf }}
             
@@ -86,40 +87,152 @@
         </div>
 
 
+        <div class='checkbox-container2'>
+        <ul class="checkbox-grid">
+            <li><div>
+                <div title = 'Places tier 2+ goals only' class = 'label'>
+                    {{ form.form_hard_mode.label }}<br>
+                </div>
+                <div title = 'Places tier 2+ goals only' class = 'checkbox'>
+                    {{ form.form_hard_mode }}<br>
+                </div>
+            </div></li>
+            <li><div>
+                <div title = 'Place tier 1-2 goals only' class = 'label'>
+                    {{ form.form_easy_mode.label }}<br>
+                </div>
+                <div title = 'Place tier 1-2 goals only' class = 'checkbox'>
+                    {{ form.form_easy_mode }}<br>
+                </div>
+            </div></li>
+
+        </ul>
+        
+        </div>
+
+
         <div class = "submission_area">
             <div>{{ form.form_seed.label }}</div>
             <div class="numeric-input">{{ form.form_seed }}</div>
-            <div class = "button_area"><input class='pure-button' type = "submit" value ="Submit"></input></div>
+            <div class = "button_area"><input class='pure-button' type = "submit" value ="Generate"></input></div>
             
         </div>
 
         </div>
-        </form>
-        {% if goals is not none %}
         
+
+        
+        </form>
+        {% if error_message is not none %}
+        <div class = 'error-message'>{{error_message}}</div>
+        {% endif %}
+        
+        {% if goals is not none %}
+            <div class="title3"><span><a href = "/{{url}}" target = "_blank">http://bingo.cleartonic.net/{{url}}</a></span></div>
+
             <div class="main-content">
-            <div class="title"><span>Seed Number: {{seed_number}}</span></div>
-            <div class="title"><span>Settings: {{settings}}</span></div>
             <div class="bingo-card">
-                {% for goal in goals %}
-                    <div title = "{{goal[1]}}" class="bingo-card__item{{goal[2]}}">
+                <div title = "11" class="bingo-card__borders">TL-BR</div>
+                <div title = "1" class="bingo-card__borders">C1</div>
+                <div title = "2" class="bingo-card__borders">C2</div>
+                <div title = "3" class="bingo-card__borders">C3</div>
+                <div title = "4" class="bingo-card__borders">C4</div>
+                <div title = "5" class="bingo-card__borders">C5</div>
+                
+                <div title = "6" class="bingo-card__borders">R1</div>
+                
+            
+                {% for goal in goals[0:5] %}
+                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
                     {% if goal[1] != '' %}
                         <div class = "bingo-card__tooltipindicator"></div>
                     {% endif %}
+                    {% if goal[4] == True %}
+                        <div class = "bingo-card__pwindicator"></div>
+                    {% endif %}
                     <div class = "bingo-card__text">{{goal[0]}}</div>
                     <div class = "bingo-card__footer">MM{{goal[3]}}</div>
-                    
-                    
-                <span class="bingo-card__checkbox"></span>
-                
-                </div>            
-                
+                    </div>            
                 {% endfor %}
+                
+                <div title = "7" class="bingo-card__borders">R2</div>
+                
+                {% for goal in goals[5:10] %}
+                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if goal[1] != '' %}
+                        <div class = "bingo-card__tooltipindicator"></div>
+                    {% endif %}
+                    {% if goal[4] == True %}
+                        <div class = "bingo-card__pwindicator"></div>
+                    {% endif %}
+                    <div class = "bingo-card__text">{{goal[0]}}</div>
+                    <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    </div>            
+                {% endfor %}
+                
+                <div title = "8" class="bingo-card__borders">R3</div>
+                
+                {% for goal in goals[10:15] %}
+                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if goal[1] != '' %}
+                        <div class = "bingo-card__tooltipindicator"></div>
+                    {% endif %}
+                    {% if goal[4] == True %}
+                        <div class = "bingo-card__pwindicator"></div>
+                    {% endif %}
+                    <div class = "bingo-card__text">{{goal[0]}}</div>
+                    <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    </div>            
+                {% endfor %}
+                
+                <div title = "9" class="bingo-card__borders">R4</div>
+                
+                {% for goal in goals[15:20] %}
+                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if goal[1] != '' %}
+                        <div class = "bingo-card__tooltipindicator"></div>
+                    {% endif %}
+                    {% if goal[4] == True %}
+                        <div class = "bingo-card__pwindicator"></div>
+                    {% endif %}
+                    <div class = "bingo-card__text">{{goal[0]}}</div>
+                    <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    </div>            
+                {% endfor %}
+                
+                <div title = "10" class="bingo-card__borders">R5</div>
+                
+                {% for goal in goals[20:25] %}
+                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if goal[1] != '' %}
+                        <div class = "bingo-card__tooltipindicator"></div>
+                    {% endif %}
+                    {% if goal[4] == True %}
+                        <div class = "bingo-card__pwindicator"></div>
+                    {% endif %}
+                    <div class = "bingo-card__text">{{goal[0]}}</div>
+                    <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    </div>            
+                {% endfor %}
+                
+                <div title = "12" class="bingo-card__borders">BL-TR</div>
+                <div title = "" class="bingo-card__bordersblank"></div>
+                <div title = "" class="bingo-card__bordersblank"></div>
+                <div title = "13" class="bingo-card__borders">BOARD</div>
+                <div title = "" class="bingo-card__bordersblank"></div>
+                <div title = "" class="bingo-card__bordersblank"></div>
+                <div title = "" class="bingo-card__bordersblank"></div>
+                
             
             </div>
             </div>
-        
-            <!-- <div class="title2"><span>Some users report issues with Firefox for clicking the card. Use Chrome if possible</span></div> -->
+            <div class="title"><span>Seed Number: {{seed_number}} | Settings: {{settings}}</span></div>        
+            <div class="font-buttons">
+            <div class = 'font-button'> <button id="decrease-font-size">- font</button> </div>
+            <div class = 'font-button'><button id="increase-font-size">+ font</button></div>
+            <div class = 'font-button'><button id="toggle-games">Toggle games</button></div>
+            </div>
+            
             <aside class="context">
                 <div class="clear-button">Clear board</div>
             </aside>
