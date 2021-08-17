@@ -32,15 +32,22 @@ console.setFormatter(formatter)
 logging.getLogger("").addHandler(console)
 
 
+def apply_bool(x):
+    if x == 'y' or x == 'Y':
+        return True
+    else:
+        return False
+        
+        
 def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
     
     if settings == None:
-        settings = {'mm1' : True,
-            'mm2' : True,
+        settings = {'mm1' : False,
+            'mm2' : False,
             'mm3' : True,
-            'mm4' : True,
-            'mm5' : True,
-            'mm6' : True,
+            'mm4' : False,
+            'mm5' : False,
+            'mm6' : False,
             'hard_mode' : True,
             'easy_mode' : False}
     
@@ -80,6 +87,7 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
     
     df['rank'] = df['rank'].apply(apply_int)
     df['games'] = df['games'].astype(str)
+    df['img'] = df['img'].apply(lambda x: x if type(x) == str else '')
     
     
     
@@ -103,8 +111,10 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         # x = games
         # y = type
         
+        real_games = [i for i in valid_games if i != 'any' and i != 'hard_mode' and i != 'easy_mode' and i != 'all']
         
-        # breakpoint()
+        if type(y) == float:
+            y = ''
         
         # ALL case
         if y == 'all':
@@ -113,7 +123,20 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
                     return False
             return True
         
-        # ANY case
+        # if ANY# case (number)
+        if 'any' in y and len(y) > 3:
+            try:
+                num = int(y.split("any")[1])
+                if len(real_games) >= num:
+                    return True
+                else:
+                    return False
+            except:
+                logging.info("Failed parse on any#")
+                return False
+        
+        
+        # ANY default case
         if y == '' or y != y:
             for game in x.split(","):
                 if game in valid_games:
@@ -196,74 +219,175 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
 
         
         
-        dft = df3t.append(df2t).append(df1t)        
-        existing_groups = list(set(dft['group']))
-        existing_groups = [i for i in existing_groups if type(i) == str]
+        dft = df3t.append(df2t).append(df1t)
+
         
-        # now check if group type is unique and try to find replacements if not
-        try: 
-            
-            indexes_to_add = []
-            indexes_to_drop = []
-            
-            
+        ###############################
+        ###### GROUP REPLACEMENT ######
+        ###############################
+        def check_groups(dft):
+        
             df_count = dft[['group']]
             df_count['count'] = 1
+            df_count = df_count[df_count['group']==df_count['group']]
+            gdict = df_count.T.to_dict()
+            gdict2 = {}
+            for k, v in gdict.items():
+                g = [i.strip() for i in gdict[k]['group'].split(",")]
+                
+                for i in g:
+                    if i not in gdict2:
+                        gdict2[i] = {}
+                        gdict2[i]['count'] = 1
+                        gdict2[i]['idx'] = [k]
+                    else:
+                        gdict2[i]['count'] = gdict2[i]['count'] + 1
+                        gdict2[i]['idx'] = gdict2[i]['idx'] + [k]
+                        
             
+            current_idx = []
+            for i in gdict2.keys():
+                for i2 in gdict2[i]['idx']:
+                    current_idx.append(i2)
+            current_idx = sorted(list(set(current_idx)))
+            
+            
+            groups_to_replace = [i for i in gdict2 if gdict2[i]['count'] > 1]            
+            
+            return df_count, gdict2, groups_to_replace
+
+
+
+        def find_replacements(dft):
 
             
-            df_piv = df_count.pivot_table(index=['group'],values='count',aggfunc=np.sum)
-            
-            
-        
-            if not df_piv.empty:            
-                
-                
-                try:
-                
-                    groups_to_replace = df_piv[df_piv['count']>1].to_dict()['count']
-        
-        
-                    for group_type, count in groups_to_replace.items():
-                        
-                        # filter on matching group types
-                        dft2 = dft[dft['group']==group_type]
-                        
-                        # sample 1, and then replace the remaining 
-                        indexes = list(dft2.index)
-                        index_to_keep = random.choice(indexes)
-                        other_indexes = [i for i in indexes if i not in [index_to_keep]]
-                        
-                        for idx in other_indexes:
-                            x = df_dict[idx]
-                            rank = x['rank']
-                            matching_ranks = [i for i in df_dict if df_dict[i]['rank']==rank and df_dict[i]['group'] not in existing_groups and i not in dft.index and i not in indexes_to_add and i not in indexes_to_drop]
-                            
-                            if not matching_ranks:
-                                logging.info("Matching ranks & group types could not be found, ignoring")
-                            else:
-                                chosen_idx = random.choice(matching_ranks)
-                                if type(df_dict[chosen_idx]['group']) == str:    
-                                    existing_groups.append(df_dict[chosen_idx]['group'])
-                                indexes_to_add.append(chosen_idx)
-                                indexes_to_drop.append(idx)
-                except:
-                    logging.info("Error on group allocation, retrying df")
-                    continue
-                            
-                            
-        except Exception as e:
-            logging.info("Error on replacing group_types: %s" % e)
-            
-            
-        logging.info("Adding indexes %s" % indexes_to_add)
-        logging.info("Dropping indexes %s" % indexes_to_drop)
-        
 
+            existing_groups = []
+            existing_groups2 = list(set(dft['group']))
+            existing_groups2 = [i for i in existing_groups2 if type(i) == str]
+            for i in existing_groups2:
+                if type(i) == list:
+                    for i2 in i:
+                        existing_groups.append(i2)
+                else:
+                    existing_groups.append(i)
+            existing_groups = sorted(list(set(existing_groups)))
+    
+    
+            # now check if group type is unique and try to find replacements if not
+            try: 
+                
+                indexes_to_add = []
+                indexes_to_drop = []
+                
+                df_count, gdict2, groups_to_replace = check_groups(dft)
+    
+                
+                df_piv = df_count.pivot_table(index=['group'],values='count',aggfunc=np.sum)
+            
+                if not df_piv.empty:            
+                    
+                    #### NEW METHOD, SPLIT GROUPS ####
+                    
+                    try:
+    
+                        
+                        for g in groups_to_replace:
+                            indexes = list(gdict2[g]['idx'])
+                            index_to_keep = random.choice(indexes)
+                            other_indexes = [i for i in indexes if i not in [index_to_keep]]
+                            
+                            for idx in other_indexes:
+                                rank = dft.loc[idx]['rank']
+                                matching_ranks = [i for i in df_dict if df_dict[i]['rank']==rank and df_dict[i]['group'] not in existing_groups and i not in dft.index and i not in indexes_to_add and i not in indexes_to_drop]
+                                
+                                if not matching_ranks:
+                                    logging.info("Matching ranks & group types could not be found, ignoring")
+                                else:
+                                    chosen_idx = random.choice(matching_ranks)
+                                    if type(df_dict[chosen_idx]['group']) == str:    
+                                        existing_groups.append(df_dict[chosen_idx]['group'])
+                                    indexes_to_add.append(chosen_idx)
+                                    indexes_to_drop.append(idx)
+                        
+                    except Exception as e:
+                        logging.info("Error on group allocation, retrying df %s" % e)
+                        return pd.DataFrame()
+                    
+                    
+                    #### OLD METHOD, BEFORE SPLIT GROUPS ####
+                    
+                    # try:
+                    
+                    #     breakpoint()
+                    #     groups_to_replace = df_piv[df_piv['count']>1].to_dict()['count']
+            
+            
+                    #     for group_type, count in groups_to_replace.items():
+                            
+                    #         # filter on matching group types
+                    #         dft2 = dft[dft['group']==group_type]
+                            
+                    #         # sample 1, and then replace the remaining 
+                    #         indexes = list(dft2.index)
+                    #         index_to_keep = random.choice(indexes)
+                    #         other_indexes = [i for i in indexes if i not in [index_to_keep]]
+                            
+                    #         for idx in other_indexes:
+                    #             x = df_dict[idx]
+                    #             rank = x['rank']
+                    #             matching_ranks = [i for i in df_dict if df_dict[i]['rank']==rank and df_dict[i]['group'] not in existing_groups and i not in dft.index and i not in indexes_to_add and i not in indexes_to_drop]
+                                
+                    #             if not matching_ranks:
+                    #                 logging.info("Matching ranks & group types could not be found, ignoring")
+                    #             else:
+                    #                 chosen_idx = random.choice(matching_ranks)
+                    #                 if type(df_dict[chosen_idx]['group']) == str:    
+                    #                     existing_groups.append(df_dict[chosen_idx]['group'])
+                    #                 indexes_to_add.append(chosen_idx)
+                    #                 indexes_to_drop.append(idx)
+                    # except:
+                    #     logging.info("Error on group allocation, retrying df")
+                    #     continue
+                                
+                                
+            except Exception as e:
+                logging.info("Error on replacing group_types: %s" % e)
+                
+                
+            logging.info("Adding indexes %s" % indexes_to_add)
+            logging.info("Dropping indexes %s" % indexes_to_drop)
+            
+    
+            
+            dft = dft.drop(indexes_to_drop).append(df.loc[indexes_to_add])
+            
+            return dft
         
-        dft = dft.drop(indexes_to_drop).append(df.loc[indexes_to_add])
         
+        
+        dft = find_replacements(dft)
+        
+        if dft.empty:
+            # failure case
+            logging.info("Checking next df iteration")
+            continue
 
+        # now after adding new items, perform check again
+        # if groups_to_replace is empty list, proceed
+        # if not, repeat
+        
+        
+        
+        df_count, gdict2, groups_to_replace = check_groups(dft)
+        
+        if groups_to_replace:
+            # repeat until success
+            iternum = 0
+            while not groups_to_replace or iternum  < 100:
+                logging.info("Retrying group replacement %s" % iternum)
+                df_count, gdict2, groups_to_replace = check_groups(dft)
+                iternum  += 1
         
 
         
@@ -539,7 +663,7 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
                     iter_num += 1
                     
                     
-                    
+                
                     
                     
             df_iter_num += 1
@@ -561,11 +685,6 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         # logging.info(row_stdev_pass, col_stdev_pass)
 
 
-    def apply_bool(x):
-        if x == 'y' or x == 'Y':
-            return True
-        else:
-            return False
 
     dft['pw'] = dft['pw'].apply(apply_bool)
 
@@ -580,18 +699,25 @@ def generate_popout(settings):
     squares = [int(i) for i in data[1:]]
     
     df = pd.read_csv('latest_data.csv').loc[squares]
+    df['pw'] = df['pw'].apply(apply_bool)
+    df['img'] = df['img'].apply(lambda x: x if type(x) == str else '')
     
-    goalsd = df[['goal','notes', 'rank', 'games','pw']].T.to_dict()
+
+    goalsd = df[['goal','notes', 'rank', 'games','pw', 'img']].T.to_dict()
     goals = []
-    for k, v in goalsd.items():
+    for idx, (k, v) in enumerate(goalsd.items()):
+        img = []
         notes = v['notes']
         if notes != notes:
             notes = ''
         if v['pw']:
             notes = '%s\n(password allowed)' % notes
+             
+        if v['img']:
+            img = v['img'].replace(" ","").split(",")
             
-        goals.append([v['goal'],notes, v['rank'], v['games'], v['pw'], k])
-
+        goals.append([v['goal'],notes, v['rank'], v['games'], v['pw'], k, img, idx])
+    
     
     return data_header, goals, "Seed %s" % settings_str 
 

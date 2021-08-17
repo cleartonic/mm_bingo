@@ -143,75 +143,155 @@
                 
             
                 {% for goal in goals[0:5] %}
-                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
-                    {% if goal[1] != '' %}
-                        <div class = "bingo-card__tooltipindicator"></div>
+                    <div data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                        <div class = "bingo-card__tooltipindicator"><img src = "{{ url_for('static', filename='info.png') }}"></img></div>
                     {% endif %}
                     {% if goal[4] == True %}
-                        <div class = "bingo-card__pwindicator"></div>
+                        <div class = "bingo-card__pwindicator">
+                            <img src = "{{ url_for('static', filename='pw.png') }}"></img>
+                        </div>
                     {% endif %}
                     <div class = "bingo-card__text">{{goal[0]}}</div>
                     <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    
+                    
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                    <div class = 'tooltip-div' idx = {{goal[7]}} style = 'display:none;'>{{goal[1]}}
+                    
+                        {% if goal[6] is not none %}
+                            {% for goal in goal[6] %}
+                            <br><div class = 'tooltip-img-container'><img src = "static/img/{{goal}}"></img></div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
                     </div>            
                 {% endfor %}
                 
                 <div title = "7" class="bingo-card__borders">R2</div>
                 
                 {% for goal in goals[5:10] %}
-                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
-                    {% if goal[1] != '' %}
-                        <div class = "bingo-card__tooltipindicator"></div>
+                    <div data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                        <div class = "bingo-card__tooltipindicator"><img src = "{{ url_for('static', filename='info.png') }}"></img></div>
                     {% endif %}
                     {% if goal[4] == True %}
-                        <div class = "bingo-card__pwindicator"></div>
+                        <div class = "bingo-card__pwindicator">
+                            <img src = "{{ url_for('static', filename='pw.png') }}"></img>
+                        </div>
                     {% endif %}
                     <div class = "bingo-card__text">{{goal[0]}}</div>
                     <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    
+                    
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                     <div class = 'tooltip-div' idx = {{goal[7]}} style = 'display:none;'>{{goal[1]}}
+                    
+                        {% if goal[6] is not none %}
+                            {% for goal in goal[6] %}
+                            <br><div class = 'tooltip-img-container'><img src = "static/img/{{goal}}"></img></div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
                     </div>            
                 {% endfor %}
                 
                 <div title = "8" class="bingo-card__borders">R3</div>
                 
                 {% for goal in goals[10:15] %}
-                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
-                    {% if goal[1] != '' %}
-                        <div class = "bingo-card__tooltipindicator"></div>
+                    <div data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                        <div class = "bingo-card__tooltipindicator"><img src = "{{ url_for('static', filename='info.png') }}"></img></div>
                     {% endif %}
                     {% if goal[4] == True %}
-                        <div class = "bingo-card__pwindicator"></div>
+                        <div class = "bingo-card__pwindicator">
+                            <img src = "{{ url_for('static', filename='pw.png') }}"></img>
+                        </div>
                     {% endif %}
                     <div class = "bingo-card__text">{{goal[0]}}</div>
                     <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    
+                    
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                     <div class = 'tooltip-div' idx = {{goal[7]}} style = 'display:none;'>{{goal[1]}}
+                    
+                        {% if goal[6] is not none %}
+                            {% for goal in goal[6] %}
+                            <br><div class = 'tooltip-img-container'><img src = "static/img/{{goal}}"></img></div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
                     </div>            
                 {% endfor %}
                 
                 <div title = "9" class="bingo-card__borders">R4</div>
                 
                 {% for goal in goals[15:20] %}
-                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
-                    {% if goal[1] != '' %}
-                        <div class = "bingo-card__tooltipindicator"></div>
+                    <div data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                        <div class = "bingo-card__tooltipindicator"><img src = "{{ url_for('static', filename='info.png') }}"></img></div>
                     {% endif %}
                     {% if goal[4] == True %}
-                        <div class = "bingo-card__pwindicator"></div>
+                        <div class = "bingo-card__pwindicator">
+                            <img src = "{{ url_for('static', filename='pw.png') }}"></img>
+                        </div>
                     {% endif %}
                     <div class = "bingo-card__text">{{goal[0]}}</div>
                     <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    
+                    
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                     <div class = 'tooltip-div' idx = {{goal[7]}} style = 'display:none;'>{{goal[1]}}
+                    
+                        {% if goal[6] is not none %}
+                            {% for goal in goal[6] %}
+                            <br><div class = 'tooltip-img-container'><img src = "static/img/{{goal}}"></img></div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
                     </div>            
                 {% endfor %}
                 
                 <div title = "10" class="bingo-card__borders">R5</div>
                 
                 {% for goal in goals[20:25] %}
-                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
-                    {% if goal[1] != '' %}
-                        <div class = "bingo-card__tooltipindicator"></div>
+                    <div data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                        <div class = "bingo-card__tooltipindicator"><img src = "{{ url_for('static', filename='info.png') }}"></img></div>
                     {% endif %}
                     {% if goal[4] == True %}
-                        <div class = "bingo-card__pwindicator"></div>
+                        <div class = "bingo-card__pwindicator">
+                            <img src = "{{ url_for('static', filename='pw.png') }}"></img>
+                        </div>
                     {% endif %}
                     <div class = "bingo-card__text">{{goal[0]}}</div>
                     <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    
+                    
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                     <div class = 'tooltip-div' idx = {{goal[7]}} style = 'display:none;'>{{goal[1]}}
+                    
+                        {% if goal[6] is not none %}
+                            {% for goal in goal[6] %}
+                            <br><div class = 'tooltip-img-container'><img src = "static/img/{{goal}}"></img></div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
                     </div>            
                 {% endfor %}
                 

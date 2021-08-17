@@ -35,12 +35,12 @@ def get_latest_bingo():
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                os.path.join(THIS_FILEPATH,'credentials','credentials.json'), SCOPES)
-            creds = flow.run_local_server()
+        # if creds and creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+        # else:
+        #     flow = InstalledAppFlow.from_client_secrets_file(
+        #         os.path.join(THIS_FILEPATH,'credentials','credentials.json'), SCOPES)
+        #     creds = flow.run_local_server()
         # Save the credentials for the next run
         with open(os.path.join(THIS_FILEPATH,'credentials','token.pickle'), 'wb') as token:
             pickle.dump(creds, token)

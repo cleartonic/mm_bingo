@@ -26,13 +26,28 @@
         <div class="title_text"> Mega Man 1-6 BINGO</div>
         <div class = "ct_info">Generator by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a></div>
         <div class = "other_info">Goals by <a href = "https://twitter.com/BaronHaynes" target = "_blank">@BaronHaynes</a>, <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a>  et al.</div>
-            <div class="main-content">
+            <div class="main-content-faq">
             <div style="    font-size:36px;text-align:center">FAQ</div>
             <ul>
+                {% set next_break = 'y' %}
                 {% for rule in rules %}
-                <li>{{rule}}</li>
+                    {% if rule == '      ' %}
+                        <!-- <li class = 'faq-item-break'>{{rule}}</li> -->
+                        {% set next_break = 'f' %}
+                    {% elif rule[0:4] == '    ' %}
+                        <li class = 'faq-item'>&nbsp;&nbsp;&nbsp;&nbsp;{{rule}}</li>
+                    {% else %}
+                        {% if next_break == 'y' %}
+                            <li class = 'faq-item2'>{{rule}}</li>
+                            {% set next_break = 'f' %}
+                        {% else %}
+                            <li class = 'faq-item'>{{rule}}</li>
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
             </ul>
+            
             </div>
+            
     </body>
 </html>

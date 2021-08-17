@@ -425,7 +425,59 @@ footer a .icons {
   max-width: 800px;
   width: 100%;
   margin: 1em auto 0;
-  overflow: hidden;
+
+  overflow: visible;
+}
+
+.main-content-faq {
+  max-width: 800px;
+  width: 100%;
+  margin: 1em auto 0;
+  height: auto;
+  position:relative;
+  
+
+}
+
+.main-content-faq li {
+
+    float: left;
+    width: 100%;
+    height: auto;
+    white-space: pre; 
+
+}
+
+
+
+.faq-item{
+    white-space: pre; 
+
+
+}
+
+.faq-item2{
+    white-space: pre; 
+    margin-top: 20px;
+
+}
+
+ul li {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal !important;
+  
+}
+
+ul {
+  min-height: 100%;
+    
+}
+
+.foot {
+    
+
+    padding: 30px;
 }
 
 .title {
@@ -494,6 +546,7 @@ footer a .icons {
   grid-template-rows: 30px repeat(5, 136px) 30px;
   grid-template-columns: 30px repeat(5, 1fr) ;
   /* text-transform: uppercase; */
+  overflow: visible;
 }
 
 
@@ -549,16 +602,16 @@ footer a .icons {
 }
 
 .item2 {
-  border: 1px solid #e0dd1f;
+  border: 2px solid #e0dd1f;
   font-size: 14px;
 }
 .item3 {
-  border: 1px solid #de0909;
+  border: 2px solid #de0909;
   font-size: 14px;
 }
 
 .item4 {
-  border: 1px solid #6c07fa;
+  border: 2px solid #6c07fa;
   font-size: 14px;
 }
 
@@ -579,18 +632,58 @@ footer a .icons {
 }
 
 .bingo-card__tooltipindicator {
-  border: 3px solid #0930de;
+  /* border: 3px solid #0930de; */
   position: absolute;
   top: 0px;
   left: 0px
 }
 
+
 .bingo-card__pwindicator {
-  border: 3px solid #04472a;
+  /* border: 3px solid #04472a; */
   position: absolute;
   top: 0px;
   right: 0px
 }
+
+ 
+.bingo-card-item span {
+  display:none;
+  -moz-border-radius:6px;
+  -webkit-border-radius:6px;
+  border-radius:6px;
+  color:black;
+  background:white; 
+}
+
+
+.container span tooltip-img-container {
+  width: 140px;
+}
+
+.bingo-card-item span img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+ 
+.tooltip-div {
+  display:none;
+  position:absolute;
+  background: #202020;
+  color: white;
+  
+
+  z-index:1000;
+  font-size: 14px;
+  border:3px solid black;
+  /* margin-top:24px; */
+  /* margin-left:24px; */
+  overflow:auto; 
+
+}
+
+
 
 
 
@@ -746,16 +839,16 @@ footer a .icons {
 }
 
 .item2-popout {
-  border: 1px solid #e0dd1f;
+  border: 2px solid #e0dd1f;
   font-size: 16px;
 }
 .item3-popout {
-  border: 1px solid #de0909;
+  border: 2px solid #de0909;
   font-size: 16px;
 }
 
 .item4-popout {
-  border: 1px solid #6c07fa;
+  border: 2px solid #6c07fa;
   font-size: 16px;
 }
 
@@ -765,16 +858,16 @@ footer a .icons {
 }
 
 .item2-popout-board {
-  border: 1px solid #e0dd1f;
+  border: 2px solid #e0dd1f;
   font-size: 14px;
 }
 .item3-popout-board {
-  border: 1px solid #de0909;
+  border: 2px solid #de0909;
   font-size: 14px;
 }
 
 .item4-popout-board {
-  border: 1px solid #6c07fa;
+  border: 2px solid #6c07fa;
   font-size: 14px;
 }
 
@@ -796,4 +889,29 @@ footer a .icons {
 
 .bingo-card__borders-popout:hover {
   background: #39485c;
+}
+
+.password-container {
+  display: grid;
+  margin-top: 40px;
+  grid-gap: 2px;
+  grid-template-columns: auto auto auto auto;
+  grid-template-columns: repeat(3, 1fr) ;
+
+}
+.password-container > div {
+  margin: 30px;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font-size:36px;
+    
+}
+
+.grid-container {
+
+  background-color: #2196F3;
+  padding: 10px;
 }

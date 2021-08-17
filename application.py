@@ -9,6 +9,7 @@ import datetime, traceback
 import logging
 import traceback
 import os
+import pandas as pd
 
 application = app = Flask(__name__)
 application.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -85,6 +86,32 @@ def get_url(settings, seed):
     
     return url
 
+@application.route("/faq", methods=['GET'])
+def faq():
+
+    logging.info("FAQ")
+    
+    df = pd.read_csv('latest_faq.csv')
+    rules = list(df['goal'])    
+    
+
+    
+    return render_template('faq.html', rules = rules)
+    
+
+@application.route("/password", methods=['GET'])
+def password():
+
+    logging.info("Password")
+    
+    df = pd.read_csv('latest_data.csv')
+    images = sorted([i for i in df['img'].unique() if '-pw' in str(i)])
+    
+    
+
+    
+    return render_template('password.html', images= images)
+    
 
 @application.route("/bingo-popout", methods=['GET'])
 def popout():
@@ -99,6 +126,11 @@ def popout():
         return None
     
     data_header, goals, settings_str = generate_popout(passed_settings)
+    
+    logging.info("\n\n")
+    for i in goals:
+        logging.info(i)
+    logging.info("\n\n")
     
     return render_template('bingo_popout.html', data_header = data_header, goals = goals, settings_str = settings_str)
     
@@ -136,7 +168,7 @@ def index():
                     for i in x:
                         if i == 'H':
                             settings['hard_mode'] = True
-                        if i == 'E':
+                        elif i == 'E':
                             settings['easy_mode'] = True
                         else:
                             new = 'mm%s' % i
@@ -162,7 +194,7 @@ def index():
             settings_check = [i for i in list(passed_settings.keys()) if i not in ['settings','seed']]
             if settings_check:
                 error_message = 'Error on generation. Do not pass in foreign arguments'
-                return minify(render_template('index.html', goals = None, settings = None, seed_number = None, form=form, url = None, error_message = error_message))
+                return None
             
             if passed_settings:
                 for k, v in settings.items():
@@ -221,17 +253,28 @@ def index():
                 goals = list(df['goal'].unique())
     
                 
-                goalsd = df[['goal','notes', 'rank', 'games','pw']].T.to_dict()
+                goalsd = df[['goal','notes', 'rank', 'games','pw', 'img']].T.to_dict()
                 goals = []
-                for k, v in goalsd.items():
+                for idx, (k, v) in enumerate(goalsd.items()):
+                    img = []
                     notes = v['notes']
                     if notes != notes:
                         notes = ''
                     if v['pw']:
                         notes = '%s\n(password allowed)' % notes
+                         
+                    if v['img']:
+                        img = v['img'].replace(" ","").split(",")
                         
-                    goals.append([v['goal'],notes, v['rank'], v['games'], v['pw'], k])
+                    goals.append([v['goal'],notes, v['rank'], v['games'], v['pw'], k, img, idx])
                 
+                
+
+                logging.info("\n\n")
+                for i in goals:
+                    logging.info(i)
+                logging.info("\n\n")
+
     
             form.form_seed.data = seed
     
@@ -249,5 +292,13 @@ def index():
         error_message = 'Error on generation. Try choosing a different combination of settings'
         return (render_template('index.html', goals = None, settings = None, seed_number = None,form=MainForm(), url = None, error_message = error_message))
 if __name__ == '__main__':
-    application.run()
+    
+    
+    df = pd.read_csv("latest_data.csv")
+    img = [i for i in df['img'].unique() if i == i]
+    
+    for i in img:
+        if not os.path.exists(os.path.join('static','img',i)) and "\n" not in i and "," not in i:
+            print("Missing %s" % i)
+    # application.run()
     # application.run(debug=True)

@@ -35,17 +35,33 @@
                     
                 
                     {% for goal in goals[0:5] %}
-                        <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}-popout">
-                        {% if goal[1] != '' %}
-                            <div class = "bingo-card__tooltipindicator"></div>
+                    <div data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                        <div class = "bingo-card__tooltipindicator"><img src = "{{ url_for('static', filename='info.png') }}"></img></div>
+                    {% endif %}
+                    {% if goal[4] == True %}
+                        <div class = "bingo-card__pwindicator">
+                            <img src = "{{ url_for('static', filename='pw.png') }}"></img>
+                        </div>
+                    {% endif %}
+                    <div class = "bingo-card__text">{{goal[0]}}</div>
+                    <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    
+                    
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                     <div class = 'tooltip-div' idx = {{goal[7]}} style = 'display:none;'>{{goal[1]}}
+                    
+                        {% if goal[6] is not none %}
+                            {% for goal in goal[6] %}
+                            <br><div class = 'tooltip-img-container'><img src = "static/img/{{goal}}"></img></div>
+                            {% endfor %}
                         {% endif %}
-                        {% if goal[4] == True %}
-                            <div class = "bingo-card__pwindicator"></div>
-                        {% endif %}
-                        <div class = "bingo-card__text">{{goal[0]}}</div>
-                        <div class = "bingo-card__footer">MM{{goal[3]}}</div>
-                        </div>            
-                    {% endfor %}
+                    </div>
+                    {% endif %}
+                    </div>            
+                {% endfor %}
                 
                 </div>
 
@@ -59,15 +75,31 @@
 
                 <div class="bingo-card-popoutboard">
                 {% for goal in goals %}
-                    <div title = "{{goal[1]}}"  data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}-popout-board">
-                    {% if goal[1] != '' %}
-                        <div class = "bingo-card__tooltipindicator"></div>
+                    <div data = "{{goal[5]}}" class="bingo-card-item item{{goal[2]}}">
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                        <div class = "bingo-card__tooltipindicator"><img src = "{{ url_for('static', filename='info.png') }}"></img></div>
                     {% endif %}
                     {% if goal[4] == True %}
-                        <div class = "bingo-card__pwindicator"></div>
+                        <div class = "bingo-card__pwindicator">
+                            <img src = "{{ url_for('static', filename='pw.png') }}"></img>
+                        </div>
                     {% endif %}
                     <div class = "bingo-card__text">{{goal[0]}}</div>
                     <div class = "bingo-card__footer">MM{{goal[3]}}</div>
+                    
+                    
+                    {% if (goal[1] != '' and goal[1] != '
+                                (password allowed)') or goal[6] != []%}
+                     <div class = 'tooltip-div' idx = {{goal[7]}} style = 'display:none;'>{{goal[1]}}
+                    
+                        {% if goal[6] is not none %}
+                            {% for goal in goal[6] %}
+                            <br><div class = 'tooltip-img-container'><img src = "static/img/{{goal}}"></img></div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
                     </div>            
                 {% endfor %}
                 </div>

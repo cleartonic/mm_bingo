@@ -2,10 +2,76 @@
 $(document).ready(function(){
 
     
-    console.log("Init")
+    console.log("Init");
+
+    // this dynamically fixes rightside & bottomside squares to anchor differently
+    // for tooltips
+
+    var tooltips = document.querySelectorAll('.tooltip-div')
+    for (i = 0; i < tooltips.length; i++) {
+        
+        var tt = tooltips[i];
+        tt_idx = parseInt($(tt).attr("idx"));
+        // console.log(tt_idx);
+        // console.log(tt_idx_bottom_right)
+        if ([13, 14, 18,19,22,23,24].indexOf(tt_idx) > -1) {
+            // console.log("BR "+ tt_idx);
+            $(tt).css(
+                {'bottom' : '0', 
+                'right' : '0'
+
+                });
+        }
+        else if ([15,16,20,21].indexOf(tt_idx) > -1) {
+            // console.log("BL "+ tt_idx);
+            $(tt).css(
+                {'bottom' : '0', 
+                'left' : '0'
+                });
+        }
+        else if ([3,4, 8, 9].indexOf(tt_idx) > -1) {
+            // console.log("TR "+ tt_idx);
+            $(tt).css(
+                {'top' : '0', 
+                'right' : '0'
+                });
+        }
+        else {
+            // console.log("TL "+ tt_idx);
+            $(tt).css(
+                {'top' : '0', 
+                'left' : '0'
+                });
+        };            
+            
+            
+        }
+    
+   
+    
+    $('.bingo-card-item').on({
+    'mouseover': function () {
+        // console.log($(this).children(".tooltip-div"));
+        $(this).delay(1100).queue(function () { $(this).children(".tooltip-div").css("display","block").css("clear","both"); $(this).dequeue(); } );
+
+        // console.log("Block");
+            
+        
+    },
+    'mouseout' : function () {
+
+        // console.log("None");
+        $(this).dequeue();
+        $(this).children( ".tooltip-div" ).css("display","none").css("clear","both");
+    }
+});
+    
+
+
+
 
     $(".bingo-card-item").on('click', function() {
-      console.log("Click")
+      // console.log("Click")
       var bg = $(this).css("background-color")
       if (bg.indexOf("96") >= 0)
       {
@@ -100,37 +166,37 @@ $(document).ready(function(){
     		
 
 
-var pageX, pageY;
+// var pageX, pageY;
 
-$(document).mousemove(
-    function(e){
-        pageX = e.pageX;
-        pageY = e.pageY;
-    });
+// $(document).mousemove(
+    // function(e){
+        // pageX = e.pageX;
+        // pageY = e.pageY;
+    // });
 
-$('#bingo-card__item3').hover(
-    function(){
-        var tip = $('<div />')
-            .addClass('tooltiptext')
-            .text($(this).attr('title'))
-            .css({
-                'position' : 'absolute',
-                'top' : pageY,
-                'left' : pageX
-            });
-        $(tip).appendTo($(this));
-        $(this).mousemove(
-            function(){
-                $('.tooltiptext').css(
-                    {
-                        'top' : pageY,
-                        'left' : pageX
-                    });
-            });
-    },
-    function(){
-        $('.tooltiptext').remove();
-    });
+// $('#bingo-card-item').hover(
+    // function(){
+        // var tip = $('<div />')
+            // .addClass('bingo-card__tooltipindicator')
+            // .text($(this).attr('title'))
+            // .css({
+                // 'position' : 'absolute',
+                // 'top' : pageY,
+                // 'left' : pageX
+            // });
+        // $(tip).appendTo($(this));
+        // $(this).mousemove(
+            // function(){
+                // $('.bingo-card__tooltipindicator').css(
+                    // {
+                        // 'top' : pageY,
+                        // 'left' : pageX
+                    // });
+            // });
+    // },
+    // function(){
+        // $('.bingo-card__tooltipindicator').remove();
+    // });
     
     
 var min = 8;
@@ -175,7 +241,6 @@ function toggleGames() {
 }
 
 document.getElementById('toggle-games').onclick = toggleGames;
-
 
 
 
