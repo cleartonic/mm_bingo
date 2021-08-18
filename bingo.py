@@ -42,13 +42,13 @@ def apply_bool(x):
 def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
     
     if settings == None:
-        settings = {'mm1' : False,
+        settings = {'mm1' : True,
             'mm2' : False,
-            'mm3' : True,
+            'mm3' : False,
             'mm4' : False,
-            'mm5' : False,
+            'mm5' : True,
             'mm6' : False,
-            'hard_mode' : True,
+            'hard_mode' : False,
             'easy_mode' : False}
     
     if SEED_NUM == None:
@@ -112,6 +112,7 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         # y = type
         
         real_games = [i for i in valid_games if i != 'any' and i != 'hard_mode' and i != 'easy_mode' and i != 'all']
+        goal_games = x.split(',')
         
         if type(y) == float:
             y = ''
@@ -127,9 +128,12 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         if 'any' in y and len(y) > 3:
             try:
                 num = int(y.split("any")[1])
-                if len(real_games) >= num:
+                
+                if len(real_games) >= num and len([i for i in real_games if i in goal_games]) == len(real_games):
+                    logging.info("TRUE")
                     return True
                 else:
+                    logging.info("FALSE")
                     return False
             except:
                 logging.info("Failed parse on any#")
@@ -727,7 +731,7 @@ def generate_popout(settings):
 
 if __name__ == '__main__':
     if True:
-        SEED_NUM = None
+        SEED_NUM = 530815525
         df, error_message, seed_num = generate_card(SEED_NUM)
         if df.empty:
             logging.info("No dataframe was returned")
