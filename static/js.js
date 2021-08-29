@@ -122,11 +122,8 @@ $(document).ready(function(){
                 
                 ];
     
-    $('.bingo-card__borders').on('click', function(){
-        
-        // console.log(this);
-        var data_num = parseInt($(this).attr("title"));
-        temp_rcd = rcd[data_num];
+    
+    function get_card_data(temp_rcd) {
         
         var tags = document.querySelectorAll('.bingo-card-item');
         // console.log(tags[0]);
@@ -146,6 +143,17 @@ $(document).ready(function(){
         var settings_str = $(settings).text();
         return_data.push(settings_str);
         
+        return return_data
+    }
+    
+    $('.bingo-card__borders').on('click', function(){
+
+        var data_num = parseInt($(this).attr("title"));
+        temp_rcd = rcd[data_num];        
+        console.log(data_num)
+        return_data = get_card_data(temp_rcd)
+        
+        
         if (temp_rcd[0] == "BOARD") {
             width_set = 800;
             height_set = 800;
@@ -163,7 +171,50 @@ $(document).ready(function(){
         
         console.log(return_data)
     });
+
+
     		
+
+    $('.custom-submit-button').on('click', function(){
+        var tags = document.querySelectorAll('.select-text');
+        var return_data = ["BOARD"];
+        var pass_bool = true;
+        for (i = 0; i < tags.length; i++) {
+            var d = $(tags[i]).children().children("option:selected").val()
+            var loc_val = return_data.indexOf(d);
+            b1 = d == "";
+            b2 = loc_val > -1;
+            console.log(b1, b2);
+            if (( b1) || (b2)) {
+                console.log("Fail")
+                pass_bool = false;
+            }
+            else {
+                return_data.push(d);
+            }
+        }
+        console.log(pass_bool)
+        return_data.push("Seed : N/A")
+        
+        console.log(return_data)
+        
+        if (pass_bool==true) {
+            width_set = 800;
+            height_set = 800;
+            window.open(`bingo-popout?data=${return_data}`, '_blank', `width=${width_set}, height=${height_set}, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no`);
+            $('.error-message-custom').css("display","none");
+            $('.url-custom').css("display","block");
+            $('.url-ahref').attr("href", `bingo-popout?data=${return_data}`, '_blank', `width=${width_set}, height=${height_set}, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no`)
+        }
+        else {
+            console.log("pass_bool is not true")
+            $('.error-message-custom').css("display","block");
+            $('.url-custom').css("display","none");
+        }
+        
+        
+    });
+
 
 
 // var pageX, pageY;
@@ -240,7 +291,18 @@ function toggleGames() {
 
 }
 
+
+function createCustom() {
+        console.log("Custom click");
+        return_data = get_card_data(rcd[13]); // 13 = board
+        window.open(`custom?data=${return_data}`, '_blank');
+    };
+
+
+
+
 document.getElementById('toggle-games').onclick = toggleGames;
+document.getElementById('create-custom-card').onclick = createCustom;
 
 
 

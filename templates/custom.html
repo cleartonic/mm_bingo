@@ -1,0 +1,128 @@
+
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"> -->
+
+
+<!-- {% block script %} -->
+
+<!-- {% endblock %} -->
+
+<html>
+    <head>
+
+        <title>BINGO</title>
+        <link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Nunito|Caveat+Brush" rel="stylesheet">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='ico.ico') }}">
+        <link href='https://fonts.googleapis.com/css?family=Ropa Sans' rel='stylesheet'>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        
+
+        <script type="text/javascript" src="/static/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/js.js"></script>        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        
+        <div class="title_text"> <img src = "{{ url_for('static', filename='site-logo.png') }}"></img></div>
+        <div class = "ct_info">Generator by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a></div>
+        <div class = "other_info">Goals by <a href = "https://twitter.com/BaronHaynes" target = "_blank">@BaronHaynes</a> et al.</div>
+        <div style = "font-size:20px;" class = "faq_info"><a href = "/faq" target = "_blank">FAQ for bingo</a></div>
+        <div style = "font-size:20px;" class = "custom_info"><a href = "/" target = "_blank">Main Generator</a></div>
+        <form action = "{{ url_for('custom') }}" method = post>
+            {{ form.csrf }}
+            <div class="title3"><span>Custom Generator</span></div>
+            <div class="title2"><span>Choose any goals. Make sure all are unique, and none are blank.</span></div>
+            <div class="main-content">
+                <div class="bingo-card-custom">
+                
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice1}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice2}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice3}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice4}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice5}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice6}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice7}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice8}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice9}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice10}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice11}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice12}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice13}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice14}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice15}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice16}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice17}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice18}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice19}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice20}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice21}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice22}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice23}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice24}}</div>
+                    </div>
+                    <div class="select-item">
+                        <div class = "select-text">{{form.form_choice25}}</div>
+                    </div>
+
+
+
+                </div>
+            </div>    
+                        <aside class="context">
+                    <!-- <div class = "button_area"><input class='pure-button' type = "submit" value ="Generate"></input></div> -->
+                    <div class="url-custom"><a class='url-ahref' href = "/{{url}}" target = "_blank"><div class = 'url-ahref2'>Link to card</div></a></div>
+                    <div class="custom-submit-button">Generate</div>
+                    <br>
+                    <div class = 'error-message-custom'>Error, check all fields are populated & unique</div>
+                </aside >
+            </form>                    
+
+    </body>
+</html>

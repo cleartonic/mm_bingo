@@ -15,6 +15,7 @@ pd.set_option('mode.chained_assignment', None)
 STDEV_LIMIT = 1.5
 SCORE_AVERAGE = 2 # this must be 2 for ranks 1 - 3, if this changes in the future in the questions, then this must also change
 SCORE_MAX = 3
+STD_GAME_REPRESENTATION = 1.25 # used with balanced games setting. takes # of goals per game and attempts to block unbalanced amounts
 DF_ITER_LIMIT = 100
 ITER_LIMIT = 500
 USE_FIXED_LOCATIONS = True
@@ -24,12 +25,12 @@ logging.root.handlers = []
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO) # , filename='log.log')
 
 # set up logging to console
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-# set a format which is simpler for console use
-formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
-console.setFormatter(formatter)
-logging.getLogger("").addHandler(console)
+# console = logging.StreamHandler()
+# console.setLevel(logging.INFO)
+# # set a format which is simpler for console use
+# formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
+# console.setFormatter(formatter)
+# logging.getLogger("").addHandler(console)
 
 
 def apply_bool(x):
@@ -38,43 +39,50 @@ def apply_bool(x):
     else:
         return False
         
+def generate_df_for_custom(passed_settings=None):
+    df = pd.read_csv('latest_data.csv')
+    
+    
+    def apply_str(x,y,z):
+        return "MM%s (R%s): %s " % (x,z,y)
+    
+    df['goal_str'] = np.vectorize(apply_str)(df['games'],df['goal'],df['rank'])
+    
+    
+    
+    if passed_settings:
+        data = passed_settings
+        data, settings_str = data.split(",Seed ")
+        data = data.split(",")
+        squares = [int(i) for i in data[1:]]
         
-def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
+        df = df.loc[squares]
     
-    if settings == None:
-        settings = {'mm1' : True,
-            'mm2' : False,
-            'mm3' : False,
-            'mm4' : False,
-            'mm5' : True,
-            'mm6' : False,
-            'hard_mode' : False,
-            'easy_mode' : False}
     
-    if SEED_NUM == None:
-        SEED_NUM = random.randint(1,999999999)
+    
+    if not passed_settings:
+        df1 = df[~df['games'].str.contains(',')]
+        df2 = df[df['games'].str.contains(',')]
+        df1 = df1.sort_values(by='goal_str')
+        df2 = df2.sort_values(by='goal_str')
         
-    error_message = ''
-    # SEED_NUM = 1000
-    random.seed(SEED_NUM)
-    logging.info("SEED NUM %s" % SEED_NUM)
+        df = df1.append(df2)
     
-    # df = bingo_df.get_latest_bingo()
+    goals2 =  df['goal_str'].to_dict()
+    if not passed_settings:        
+        goals = [('',' ')]
+    else:
+        goals = []
+        
+        
+    for k, v in goals2.items():
+        goals.append((k,v))
+        
+    return goals
     
-    # check if latest needs to be downloaded
     
-    
-    mtime = datetime.datetime.fromtimestamp(os.stat('latest_data.csv').st_mtime)
-    
-    logging.info("latest_data last modified time %s" % mtime)
-    
-    if (datetime.datetime.now() - mtime).seconds > 300:
-        logging.info("Pulling latest data due to >5 minutes from last call")
-        try:
-            bingo_df.get_latest_bingo()
-        except:
-            logging.info("ERROR: could not parse google sheets")
-            
+def generate_df(settings):      
+
     df = pd.read_csv('latest_data.csv')
     df.columns.name = ''
     # df = df.fillna('')
@@ -101,7 +109,7 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
     logging.info("Old df shape %s" % df.shape[0])    
     
     valid_games = ['any']
-    for setting, boolean in settings.items():
+    for setting, boolean in settings['games'].items():
         if boolean:
            valid_games.append(setting.replace("mm","")) 
             
@@ -130,10 +138,8 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
                 num = int(y.split("any")[1])
                 
                 if len(real_games) >= num and len([i for i in real_games if i in goal_games]) == len(real_games):
-                    logging.info("TRUE")
                     return True
                 else:
-                    logging.info("FALSE")
                     return False
             except:
                 logging.info("Failed parse on any#")
@@ -154,9 +160,121 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
     df['validator'] = np.vectorize(apply_valid_games)(df['games'],df['type'])
     df = df[df['validator']==True]
     df.drop('validator',axis=1,inplace=True)
+    
+    if not settings['multi_goals']:
+        df = df[~df['games'].str.contains(",")]
 
     logging.info("New df shape %s" % df.shape[0])    
     
+    return df
+
+
+
+def sample_df(df, settings, SEED_NUM):
+    squares = 25
+    # squares_3 = random.randint(5,5) # tried 4 -> 6, but 6 caused weirdness balancing
+    # squares_2 = random.randint(6,10)
+    squares_3 = 5
+    squares_2 = 5
+    squares_1 = squares - squares_3 - squares_2
+    
+    
+    if settings['hard_mode']:
+        df3 = df[df['rank']>3]
+        df3t = df3.sample(squares_3, random_state=SEED_NUM)
+        
+        
+        df2 = df[(df['rank']==3) & (~df.index.isin(df3t.index))]
+        df1 = df[df['rank']==2]
+        
+        
+        
+        df2t = df2.sample(squares_2, random_state=SEED_NUM)
+        df1t = df1.sample(squares_1, random_state=SEED_NUM)
+        
+        
+    elif settings['easy_mode']:
+        df3 = df[df['rank']==2]
+        df3t = df3.sample(squares_3, random_state=SEED_NUM)
+
+        df2 = df[df['rank']==1]
+        df2t = df2.sample(squares_2, random_state=SEED_NUM)
+        
+        df1 = df[(df['rank']==1) & (~df.index.isin(df2t.index))]
+        
+
+        df1t = df1.sample(squares_1, random_state=SEED_NUM)
+        
+        
+        
+    else:
+        df3 = df[df['rank']==3]
+        df2 = df[df['rank']==2]
+        df1 = df[df['rank']==1]
+
+        df3t = df3.sample(squares_3, random_state=SEED_NUM)
+        df2t = df2.sample(squares_2, random_state=SEED_NUM)
+        df1t = df1.sample(squares_1, random_state=SEED_NUM)
+
+    dft = df3t.append(df2t).append(df1t)
+    
+    new_seed = random.randint(1,999999999)
+    
+    return dft, new_seed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
+    
+    INIT_SEED_NUM = SEED_NUM
+    
+    if settings == None:
+        settings = {'games':   {'mm1' : True,
+                                'mm2' : True,
+                                'mm3' : True,
+                                'mm4' : True,
+                                'mm5' : True,
+                                'mm6' : True
+                                },
+                    'hard_mode' : False,
+                    'easy_mode' : False,
+                    'balanced_games': True,
+                    'multi_goals': False}
+    
+    if SEED_NUM == None:
+        SEED_NUM = random.randint(1,999999999)
+        
+    error_message = ''
+    random.seed(SEED_NUM)
+    logging.info("SEED NUM %s" % SEED_NUM)
+    
+
+
+
+    # check if latest needs to be downloaded
+    mtime = datetime.datetime.fromtimestamp(os.stat('latest_data.csv').st_mtime)
+    
+    logging.info("latest_data last modified time %s" % mtime)
+    
+    if (datetime.datetime.now() - mtime).seconds > 300:
+        logging.info("Pulling latest data due to >5 minutes from last call")
+        try:
+            bingo_df.get_latest_bingo()
+        except:
+            logging.info("ERROR: could not parse google sheets")
+            
+    df = generate_df(settings)
     
     
     df_iter_num = 0
@@ -175,55 +293,37 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
         
         logging.info("Df iter attempt : %s " % df_iter_num)
         
-        squares = 25
-        # squares_3 = random.randint(5,5) # tried 4 -> 6, but 6 caused weirdness balancing
-        # squares_2 = random.randint(6,10)
-        squares_3 = 5
-        squares_2 = 5
-        squares_1 = squares - squares_3 - squares_2
+        dft, SEED_NUM = sample_df(df, settings, SEED_NUM)
         
+
+        ###############################
+        ###### GAME REPRESENTATION ####
+        ###############################
         
-        if settings['hard_mode']:
-            df3 = df[df['rank']>3]
-            df3t = df3.sample(squares_3, random_state=SEED_NUM)
-            
-            
-            df2 = df[(df['rank']==3) & (~df.index.isin(df3t.index))]
-            df1 = df[df['rank']==2]
-            
-            
-            
-            df2t = df2.sample(squares_2, random_state=SEED_NUM)
-            df1t = df1.sample(squares_1, random_state=SEED_NUM)
-            
-            
-        elif settings['easy_mode']:
-            df3 = df[df['rank']==2]
-            df3t = df3.sample(squares_3, random_state=SEED_NUM)
-
-            df2 = df[df['rank']==1]
-            df2t = df2.sample(squares_2, random_state=SEED_NUM)
-            
-            df1 = df[(df['rank']==1) & (~df.index.isin(df2t.index))]
-            
-
-            df1t = df1.sample(squares_1, random_state=SEED_NUM)
-            
-            
-            
-        else:
-            df3 = df[df['rank']==3]
-            df2 = df[df['rank']==2]
-            df1 = df[df['rank']==1]
-
-            df3t = df3.sample(squares_3, random_state=SEED_NUM)
-            df2t = df2.sample(squares_2, random_state=SEED_NUM)
-            df1t = df1.sample(squares_1, random_state=SEED_NUM)
-
-
-        
-        
-        dft = df3t.append(df2t).append(df1t)
+        if settings['balanced_games']:
+            logging.info("Attempting game balancing via settings")
+            game_loop = 0
+            game_loop_limit = 100
+            pass_flag = False
+            while game_loop < game_loop_limit and not pass_flag:
+                dftg = dft[~dft['games'].str.contains(",")]
+                dftg['count'] = 1
+                counts = dftg.pivot_table(index=['games'],values='count',aggfunc=np.sum).to_dict()['count']
+                std = np.std(list(counts.values()))
+                logging.info("%s -> %s" % (counts,std))
+                
+                
+                if std <= STD_GAME_REPRESENTATION:
+                    logging.info("Game loop passed")
+                    pass_flag = True
+                    
+                dft, SEED_NUM = sample_df(df, settings, SEED_NUM)
+                    
+                game_loop += 1
+                
+                
+            if game_loop >= game_loop_limit:
+                logging.info("Game loop limit reached %s, using last rolled data" % game_loop)
 
         
         ###############################
@@ -303,7 +403,15 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
                             
                             for idx in other_indexes:
                                 rank = dft.loc[idx]['rank']
-                                matching_ranks = [i for i in df_dict if df_dict[i]['rank']==rank and df_dict[i]['group'] not in existing_groups and i not in dft.index and i not in indexes_to_add and i not in indexes_to_drop]
+                                games = dft.loc[idx]['games']
+                                
+                                # first try with matching games
+                                matching_ranks = [i for i in df_dict if df_dict[i]['rank']==rank and df_dict[i]['games']==games and df_dict[i]['group'] not in existing_groups and i not in dft.index and i not in indexes_to_add and i not in indexes_to_drop]
+                                
+                                # then try with all valid games
+                                if not matching_ranks:
+                                    matching_ranks = [i for i in df_dict if df_dict[i]['rank']==rank and df_dict[i]['group'] not in existing_groups and i not in dft.index and i not in indexes_to_add and i not in indexes_to_drop]
+
                                 
                                 if not matching_ranks:
                                     logging.info("Matching ranks & group types could not be found, ignoring")
@@ -692,7 +800,7 @@ def generate_card(SEED_NUM = random.randint(1,999999999),settings = None):
 
     dft['pw'] = dft['pw'].apply(apply_bool)
 
-    return dft, error_message, SEED_NUM
+    return dft, error_message, INIT_SEED_NUM
 
 
 def generate_popout(settings):
@@ -731,8 +839,9 @@ def generate_popout(settings):
 
 if __name__ == '__main__':
     if True:
-        SEED_NUM = 530815525
-        df, error_message, seed_num = generate_card(SEED_NUM)
+        SEED_NUM2 = None
+        settings = None
+        df, error_message, seed_num = generate_card(SEED_NUM2)
         if df.empty:
             logging.info("No dataframe was returned")
             if error_message:

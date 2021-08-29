@@ -12,9 +12,9 @@
         <title>BINGO</title>
         <link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Nunito|Caveat+Brush" rel="stylesheet">
         <link rel="shortcut icon" href="{{ url_for('static', filename='ico.ico') }}">
-        <link rel="stylesheet" type="text/css" href="/static/style.css">
         <link href='https://fonts.googleapis.com/css?family=Ropa Sans' rel='stylesheet'>
         <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
         
 
         <script type="text/javascript" src="/static/jquery.min.js"></script>
@@ -25,94 +25,113 @@
         
         <div class="title_text"> <img src = "{{ url_for('static', filename='site-logo.png') }}"></img></div>
         <div class = "ct_info">Generator by <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a></div>
-        <div class = "other_info">Goals by <a href = "https://twitter.com/BaronHaynes" target = "_blank">@BaronHaynes</a>, <a href = "https://twitter.com/cleartonic" target = "_blank">@cleartonic</a>  et al.</div>
-        <div style = "font-size:24px;" class = "faq_info"><a href = "/faq" target = "_blank">FAQ for bingo</a></div>
+        <div class = "other_info">Goals by <a href = "https://twitter.com/BaronHaynes" target = "_blank">@BaronHaynes</a> et al.</div>
+        <div style = "font-size:20px;" class = "faq_info"><a href = "/faq" target = "_blank">FAQ for bingo</a></div>
+        <div style = "font-size:20px;" class = "custom_info"><a href = "/custom" target = "_blank">Custom Card Generator</a></div>
+        <div style = "font-size:20px;" class = "password_info"><a href = "/password" target = "_blank">Passwords</a></div>
         <form action = "." method = post>
             {{ form.csrf }}
             
         <div class = 'settings-container'>
         <div class='checkbox-container'>
-        <ul class="checkbox-grid">
-            <li><div>
-                <div class = 'label'>
-                    {{ form.form_mm1.label }}<br>
-                </div>
+        <div class="checkbox-grid">
+            <div class = 'checkbox-extra-settings'>
                 <div class = 'checkbox'>
                     {{ form.form_mm1 }}<br>
                 </div>
-            </div></li>
-            <li><div>
                 <div class = 'label'>
-                    {{ form.form_mm4.label }}<br>
+                    {{ form.form_mm1.label }}<br>
                 </div>
-                <div class = 'checkbox'>
-                    {{ form.form_mm4 }}<br>
-                </div>
-            </div></li>
-            <li><div>
-                <div class = 'label'>
-                    {{ form.form_mm2.label }}<br>
-                </div>
+            </div>
+            <div class = 'checkbox-extra-settings'>
                 <div class = 'checkbox'>
                     {{ form.form_mm2 }}<br>
                 </div>
-            </div></li>       
-            
-            <li><div>
                 <div class = 'label'>
-                    {{ form.form_mm5.label }}<br>
+                    {{ form.form_mm2.label }}<br>
                 </div>
-                <div class = 'checkbox'>
-                    {{ form.form_mm5 }}<br>
-                </div>
-            </div></li>
-            <li><div>
-                <div class = 'label'>
-                    {{ form.form_mm3.label }}<br>
-                </div>
+            </div>                   
+            <div class = 'checkbox-extra-settings'>
                 <div class = 'checkbox'>
                     {{ form.form_mm3 }}<br>
                 </div>
-            </div></li>
-            <li><div>
                 <div class = 'label'>
-                    {{ form.form_mm6.label }}<br>
+                    {{ form.form_mm3.label }}<br>
                 </div>
+            </div>
+            <div class = 'checkbox-extra-settings'>
+                <div class = 'checkbox'>
+                    {{ form.form_mm4 }}<br>
+                </div>
+                <div class = 'label'>
+                    {{ form.form_mm4.label }}<br>
+                </div>
+            </div>
+            <div class = 'checkbox-extra-settings'>
+                <div class = 'checkbox'>
+                    {{ form.form_mm5 }}<br>
+                </div>
+                <div class = 'label'>
+                    {{ form.form_mm5.label }}<br>
+                </div>
+            </div>
+            <div class = 'checkbox-extra-settings'>
                 <div class = 'checkbox'>
                     {{ form.form_mm6 }}<br>
                 </div>
-            </div></li>
-        </ul>
+                <div class = 'label'>
+                    {{ form.form_mm6.label }}<br>
+                </div>
+            </div>
+        </div>
         
         </div>
 
 
         <div class='checkbox-container2'>
-        <ul class="checkbox-grid">
-            <li><div>
-                <div title = 'Places tier 2+ goals only' class = 'label'>
-                    {{ form.form_hard_mode.label }}<br>
-                </div>
+        <div class="checkbox-grid">
+            <div class = 'checkbox-extra-settings'>
                 <div title = 'Places tier 2+ goals only' class = 'checkbox'>
                     {{ form.form_hard_mode }}<br>
                 </div>
-            </div></li>
-            <li><div>
-                <div title = 'Place tier 1-2 goals only' class = 'label'>
-                    {{ form.form_easy_mode.label }}<br>
+                <div title = 'Places tier 2+ goals only' class = 'label'>
+                    {{ form.form_hard_mode.label }}<br>
                 </div>
+            </div>
+            <div class = 'checkbox-extra-settings'>
                 <div title = 'Place tier 1-2 goals only' class = 'checkbox'>
                     {{ form.form_easy_mode }}<br>
                 </div>
-            </div></li>
+                <div title = 'Place tier 1-2 goals only' class = 'label'>
+                    {{ form.form_easy_mode.label }}<br>
+                </div>
+            </div>
+            
+            <div class = 'checkbox-extra-settings'>
+                <div title = "Balance the distribution of chosen games" class = 'checkbox'>
+                    {{ form.form_balanced_games }}<br>
+                </div>
+                <div title = "Balance the distribution of chosen games" class = 'label'>
+                    {{ form.form_balanced_games.label }}<br>
+                </div>
+            </div>
+            
+            <div class = 'checkbox-extra-settings'>
+                <div title = "Allow goals that span multiple games" class = 'checkbox'>
+                    {{ form.form_multi_goals }}<br>
+                </div>
+                <div title = "Allow goals that span multiple games" class = 'label'>
+                    {{ form.form_multi_goals.label }}<br>
+                </div>
+            </div>
 
-        </ul>
+        </div>
         
         </div>
 
 
         <div class = "submission_area">
-            <div>{{ form.form_seed.label }}</div>
+            <div class = 'label' >{{ form.form_seed.label }}</div>
             <div class="numeric-input">{{ form.form_seed }}</div>
             <div class = "button_area"><input class='pure-button' type = "submit" value ="Generate"></input></div>
             
@@ -311,6 +330,7 @@
             <div class = 'font-button'> <button id="decrease-font-size">- font</button> </div>
             <div class = 'font-button'><button id="increase-font-size">+ font</button></div>
             <div class = 'font-button'><button id="toggle-games">Toggle games</button></div>
+            <div class = 'font-button'><button id="create-custom-card">Customize card</button></div>
             </div>
             
             <aside class="context">

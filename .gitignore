@@ -1,4 +1,5 @@
 credentials.json
+credentials/*
 html/*
 __pycache__/
 token.json
@@ -8,3 +9,7 @@ testing.csv
 venv
 bingo.zip
 latest_data.csv
+latest_faq.csv
+index_test.html
+img/*
+1 - old/*

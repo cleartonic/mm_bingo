@@ -27,6 +27,21 @@ body {
     
 }
 
+.custom_info {
+    position:fixed;
+    right:0px;
+    top:90px;
+    padding: 10px;
+    
+}
+.password_info {
+    position:fixed;
+    right:0px;
+    top:120px;
+    padding: 10px;
+    
+}
+
 .final_result_boxcontainer {
     font-size: 100%;
     outline: 2px solid #444444;
@@ -55,31 +70,32 @@ body {
 
 .settings-container{
 
-    display: block;
+    display: flex;
     text-align: center;
+    height: auto;
+    margin-left: 35%;
+    margin-right:35%;
     /* border: 1px gray solid;  */
 
 }
 
 .checkbox-container{
     float: left;
-    margin-left: 34%;
-    width: 10%;
-    height: 15%;
+
     /* border: 1px blue solid;  */
     
     text-align: center;
+    
     
 
 }
 
 .checkbox-container2{
-    float: left;
 
-    width: 10%;
-    height: 15%;
+
+    /* width: 20%; */
     /* border: 1px blue solid;  */
-    
+    margin-left: 10%;
     text-align: center;
     
 
@@ -87,49 +103,78 @@ body {
 
 .submission_area {
     /* border: 1px coral solid;  */
-    margin: auto;
-    width: 50%;
-    flex-wrap: nowrap;
-    text-align: center;
-    padding: 5px;
+    margin-left: auto; 
+    margin-right: 0;
+
+
 }
 
+.checkbox-grid {
 
-.checkbox-grid li{
     
-  display: block;
-  float: left;
-  width: 50%;
+  /* list-style-type: space-counter; */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margins */
+  /* display: auto; */
+  position: relative;
+    
+    
+}
+.checkbox-grid li{
+
+
+  
+/* display: grid; */
+  /* grid-gap: 2px; */
+  /* grid-template-rows: 30px repeat(5, 136px) 30px; */
 }
 
 
+.checkbox-extra-settings {
+    
+  display: flex;
+  
 
-ul.checkbox  { 
+  
+/* display: grid; */
+  /* grid-gap: 2px; */
+  /* grid-template-rows: 30px repeat(5, 136px) 30px; */
+}
+
+.label {
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+div.checkbox  { 
   margin: 0; 
   padding: 0; 
   margin-left: 20px; 
+  margin-right: 10px;
   list-style: none; 
 } 
 
-ul.checkbox li input { 
-  margin-right: .25em; 
-} 
+/* ul.checkbox li input {  */
+  /* margin-right: .25em;  */
+/* }  */
 
-ul.checkbox li { 
-  border: 1px transparent solid; 
-  display:inline-block;
-  width:12em;
-} 
+/* ul.checkbox li {  */
+  /* border: 1px transparent solid;  */
+  /* display:inline-block; */
+  /* width:12em; */
+/* }  */
 
-ul.checkbox li label { 
-  margin-left: ; 
-} 
-ul.checkbox li:hover, 
-ul.checkbox li.focus  { 
-  background-color: lightyellow; 
-  border: 1px gray solid; 
-  width: 12em; 
-} 
+/* ul.checkbox li label {  */
+  /* margin-left: ;  */
+/* }  */
+/* ul.checkbox li:hover,  */
+/* ul.checkbox li.focus  {  */
+  /* background-color: lightyellow;  */
+  /* border: 1px gray solid;  */
+  /* width: 12em;  */
+/* }  */
 
 
 
@@ -256,9 +301,14 @@ a:visited {
   /* display: flex; */
   /* flex-wrap: nowrap; */
 /* } */
-/* .button_area { */
-    /* padding: 5px 5px; */
-/* } */
+.button_area {
+    padding: 5px 5px;
+}
+
+.pure-button  {
+    font-size: 80%;
+    
+}
 
 /* .score_box { */
   /* font-size: 110%; */
@@ -462,14 +512,14 @@ footer a .icons {
 
 }
 
-ul li {
+.main-content-faq ul li {
   overflow-wrap: break-word;
   word-wrap: break-word;
   white-space: normal !important;
   
 }
 
-ul {
+.main-content-faq ul {
   min-height: 100%;
     
 }
@@ -548,6 +598,18 @@ ul {
   /* text-transform: uppercase; */
   overflow: visible;
 }
+
+.bingo-card-custom {
+  background: #303030;
+  padding: 2px;
+  display: grid;
+  grid-gap: 2px;
+  grid-template-rows: repeat(5, 136px) 30px;
+  grid-template-columns: repeat(5, 1fr) ;
+  /* text-transform: uppercase; */
+  overflow: visible;
+}
+
 
 
 .bingo-card__borders {
@@ -715,13 +777,38 @@ ul {
   border: 2px solid;
 }
 
+.custom-submit-button {
+  margin: 2em 0 0;
+
+  /* text-transform: uppercase; */
+  cursor: pointer;
+  display: inline-block;
+  border: 2px dotted;
+  color: #43b90b;
+  padding: 8px 10px;
+}
+.custom-submit-button:hover {
+  color: #f23e03;
+  border: 2px solid;
+}
+
+
+
 .error-message {
   align-items: center;
   text-align: center;
   font-size: 24px;
   color: #e80576;
-    
 }
+
+.error-message-custom {
+  align-items: center;
+  text-align: center;
+  font-size: 24px;
+  color: #e80576;
+  display: none;
+}
+
 
 
 .font-buttons {
@@ -785,12 +872,17 @@ ul {
 }
 
 .numeric-input {
-  padding: 10px;
-  height: 50px;
-  
+  padding: 2px;
+  height: 30px;
+
   color: white;
   border: 2px solid black;
-  font-size: 1.5em;
+
+}
+
+input#form_seed {
+    width: 120px;
+    
 }
 
 .tooltip {
@@ -914,4 +1006,74 @@ ul {
 
   background-color: #2196F3;
   padding: 10px;
+}
+
+
+
+.select-text {
+    font-size: 16px;
+    
+    overflow: none;  
+}
+.select-item {
+  background: #606060;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  font-size: 12px;
+  line-height: 1.35;
+  user-select: none;
+  overflow: none;
+  
+}
+
+#form_choice1 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice2 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice3 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice4 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice5 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice6 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice7 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice8 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice9 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice10 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice11 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice12 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice13 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice14 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice15 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice16 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice17 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice18 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice19 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice20 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice21 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice22 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice23 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice24 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+#form_choice25 { width: 120px; height: 120px; max-width: 100%; overflow: hidden; word-wrap: normal !important; white-space: normal;}
+
+
+
+.url-custom {
+  background: #000000;
+  color: #fff;
+  padding: 4px 2px;
+  text-align: center;
+  font-size: 24px;
+  white-space: nowrap;
+  margin-top: 40px;
+  display: none;
+}
+
+.url-ahref2 {
+    
+    text-decoration: none;
+    color: #4249fa;
+    padding: 3px 0;
+    /* border-bottom: 1px solid; */
+
+    
 }

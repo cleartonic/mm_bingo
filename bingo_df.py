@@ -90,6 +90,14 @@ def get_latest_bingo():
     
     df = df[df['rank']==df['rank']]
     
+    def apply_int(x):
+        try:
+            return int(x)
+        except:
+            return 0
+    
+    df['rank'] = df['rank'].apply(apply_int)
+    
     df.to_csv('latest_data.csv',index=None)
 
 
